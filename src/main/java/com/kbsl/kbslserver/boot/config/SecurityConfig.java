@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final AuthJwtFilter authJwtFilter;
     private final CorsConfig corsConfig;
 
-    private static final String[] PERMIT_URL_ARRAY = {
+    private static final String[] SWAGGER_URL = {
             /* swagger v2 */
             "/v2/api-docs",
             "/swagger-resources",
@@ -38,17 +38,11 @@ public class SecurityConfig {
             "/swagger-ui/**"
     };
 
-    /**
-     * Spring Security 에서 기본적으로 제공하는 Web Security 를 Custom 한다.
-     *
-     * @param http
-     * @throws Exception
-     */
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-                .oauth2Login()
-                .and()
+//                .oauth2Login()
+//                .and()
                 // CORS
                 .cors().configurationSource(corsConfig.corsFilter())
                 .and()
@@ -60,33 +54,33 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(PERMIT_URL_ARRAY).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers("/user/**").permitAll()
-                        .requestMatchers("/file/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/test/**").permitAll()
-                        .requestMatchers("/**/adm/**").hasAnyRole("ADMIN")
+                        .antMatchers(SWAGGER_URL).permitAll()
+                        .antMatchers(HttpMethod.OPTIONS).permitAll()
+                        .antMatchers("/auth/**").permitAll()
+                        .antMatchers("/member/**").authenticated()
+                        .antMatchers("/company/**").authenticated()
+                        .antMatchers("/file/**").authenticated()
+                        .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                         .and()
-                        .addFilterBefore(authJwtFilter, UsernamePasswordAuthenticationFilter.class)
                 );
-
         return http.build();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/resources/**"); // resource Spring Security FilterChain 제외
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web -> web.ignoring().requestMatchers("/resources/**"));
     }
 }

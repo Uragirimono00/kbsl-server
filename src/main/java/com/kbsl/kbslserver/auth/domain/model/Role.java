@@ -1,11 +1,13 @@
 package com.kbsl.kbslserver.auth.domain.model;
 
 import com.kbsl.kbslserver.auth.enums.ERole;
-import jakarta.persistence.*;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.persistence.*;
 
 
 @Entity

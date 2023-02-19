@@ -2,9 +2,10 @@ package com.kbsl.kbslserver.user.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kbsl.kbslserver.auth.enums.ERole;
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tb_user")

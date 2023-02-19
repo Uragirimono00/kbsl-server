@@ -8,13 +8,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
@@ -24,20 +25,20 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("kakao")
+    @GetMapping("discord")
     @ApiOperation(
-            value = "Kakao 로그인 API",
-            notes = "Kakao 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
+            value = "Discord 로그인 API",
+            notes = "Discord 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
                     " OAuth2를 사용해 로그인할 때는 해당 주소로 연결해야한다. <br>" +
-                    "<b><a href='https://localhost:8090/api/v1/oauth2/authorization/kakao'> https://localhost:8090/api/v1/oauth2/authorization/kakao </a></b> <br>" +
-                    " Dev : <b><a href='https://lcapidev.bonobono.dev/api/v1/oauth2/authorization/kakao'> https://lcapidev.bonobono.dev/api/v1/oauth2/authorization/kakao </a></b> <br>" +
+                    "<b><a href='https://localhost:8080/api/v1/oauth2/authorization/discord'> https://localhost:8080/api/v1/oauth2/authorization/discord </a></b> <br>" +
+                    " Dev : " +
                     " Prod : "
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "로그인 성공", response = AuthLoginResponse.class),
             @ApiResponse(code = 401, message = "로그인 실패")
     })
-    public ResponseEntity<AuthLoginResponse> signInKakao(@RequestParam String code, HttpServletRequest request) {
+    public ResponseEntity<AuthLoginResponse> signInDiscord(@RequestParam String code, HttpServletRequest request) {
         return new ResponseEntity<>(authService.authLogin(code, request.getServletPath()), HttpStatus.OK);
     }
 

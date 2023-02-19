@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8080
   servlet:
     context-path: /api/v1
   max-http-request-header-size: 40MB
@@ -20,25 +20,18 @@ spring:
 #    url:
 #    username:
 #    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
   datasource:
-    hikari:
-      jdbc-url: jdbc:h2:tcp://localhost/~/kbsl
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/kbsl
     username: sa
     password:
+    driver-class-name: org.h2.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
     show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         jdbc:
@@ -59,7 +52,7 @@ spring:
             clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
             scope:
               - email
-            redirectUri: "https://localhost:8080/api/v1/auth/discord"
+            redirectUri: "http://localhost:8080/api/v1/auth/discord"
             authorizationGrantType: authorization_code
             clientName: discord
             clientAuthenticationMethod: POST
@@ -70,7 +63,7 @@ spring:
 
 jwt:
   header: Authorization
-  secret: pastisjustpastpastisjustpastpastisjustpastpastisjustpastpastisjustpast
+  secret: pastisjustpast
   token-validity-in-seconds: 86400
 
 log:
