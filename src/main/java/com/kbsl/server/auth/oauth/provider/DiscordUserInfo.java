@@ -25,12 +25,12 @@ public class DiscordUserInfo implements OAuthUserInfo {
 
     @Override
     public String getUserName() {
-        return String.valueOf(attributes.get("name"));
+        return String.valueOf(attributes.get("username"));
     }
 
     @Override
     public String getImageUrl() {
-        return String.valueOf(attributes.get("picture"));
+        return "https://cdn.discordapp.com/avatars/" + String.valueOf(attributes.get("id")) + "/" + String.valueOf(attributes.get("avatar")) + ".gif";
     }
 }
 

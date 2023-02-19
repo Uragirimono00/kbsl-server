@@ -139,7 +139,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         authTokenRepository.save(authTokenEntity);
-
         AuthLoginResponse authLoginResponse = AuthLoginResponse.builder()
                 .userSeq(userDetail.getUserSeq())
                 .eRole(userDetail.getERole())
@@ -201,7 +200,7 @@ public class AuthServiceImpl implements AuthService {
     private Authentication getOAuthUserInfo(String providerName, OauthTokenResponse oauthTokenResponse, ClientRegistration provider) {
         Map<String, Object> oauthUserAttributes = getOAuthUserAttributes(provider, oauthTokenResponse);
         OAuthUserInfo oAuthUserInfo = null;
-        log.info(oauthUserAttributes.toString());
+        log.info("이것은 무엇?" + oauthUserAttributes.toString());
         if(providerName.equals("discord")) {
             oAuthUserInfo = new DiscordUserInfo(oauthUserAttributes);
         } else {

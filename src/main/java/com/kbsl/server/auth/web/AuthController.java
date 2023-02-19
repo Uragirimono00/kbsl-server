@@ -30,7 +30,7 @@ public class AuthController {
             value = "Discord 로그인 API",
             notes = "Discord 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
                     " OAuth2를 사용해 로그인할 때는 해당 주소로 연결해야한다. <br>" +
-                    "<b><a href='https://localhost:8080/api/v1/oauth2/authorization/discord'> https://localhost:8080/api/v1/oauth2/authorization/discord </a></b> <br>" +
+                    "<b><a href='http://localhost:8080/api/v1/auth/discord'> http://localhost:8080/api/v1/auth/discord </a></b> <br>" +
                     " Dev : " +
                     " Prod : "
     )

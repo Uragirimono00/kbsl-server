@@ -15,7 +15,7 @@ spring:
     show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         jdbc:
@@ -35,8 +35,8 @@ spring:
             clientId: 1072886733156384929
             clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
             scope:
-              - email
-            redirectUri: "http://localhost:8080/api/v1/auth/discord"
+              - identify
+            redirectUri: "http://localhost:8080/auth/discord"
             authorizationGrantType: authorization_code
             clientName: discord
             clientAuthenticationMethod: POST
@@ -45,3 +45,4 @@ spring:
             authorizationUri: https://discord.com/oauth2/authorize
             tokenUri: https://discord.com/api/oauth2/token
             userInfoUri: https://discord.com/api/v8/users/@me
+            userNameAttribute: username
