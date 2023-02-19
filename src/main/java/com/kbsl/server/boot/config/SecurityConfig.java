@@ -1,6 +1,6 @@
-package com.kbsl.kbslserver.boot.config;
+package com.kbsl.server.boot.config;
 
-import com.kbsl.kbslserver.auth.fliter.AuthJwtFilter;
+import com.kbsl.server.auth.fliter.AuthJwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final AuthJwtFilter authJwtFilter;
     private final CorsConfig corsConfig;
 
-    private static final String[] SWAGGER_URL = {
+    private static final String[] PERMIT_URL_ARRAY = {
             /* swagger v2 */
             "/v2/api-docs",
             "/swagger-resources",
@@ -41,8 +41,8 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-//                .oauth2Login()
-//                .and()
+                .oauth2Login()
+                .and()
                 // CORS
                 .cors().configurationSource(corsConfig.corsFilter())
                 .and()
@@ -54,33 +54,33 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .antMatchers(SWAGGER_URL).permitAll()
+                        .antMatchers(PERMIT_URL_ARRAY).permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
+                        .antMatchers("/user/**").permitAll()
+                        .antMatchers("/file/**").permitAll()
                         .antMatchers("/auth/**").permitAll()
-                        .antMatchers("/member/**").authenticated()
-                        .antMatchers("/company/**").authenticated()
-                        .antMatchers("/file/**").authenticated()
+                        .antMatchers("/test/**").permitAll()
                         .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                         .and()
+                        .addFilterBefore(authJwtFilter, UsernamePasswordAuthenticationFilter.class)
                 );
+
         return http.build();
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/resources/**"); // resource Spring Security FilterChain 제외
-    }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web -> web.ignoring().antMatchers("/resources/**"));
     }
 }

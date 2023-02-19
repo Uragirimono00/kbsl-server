@@ -5,7 +5,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'com.example'
+group = 'com.kbsl'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    // swagger v3
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
@@ -30,23 +29,19 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    //
 
     // json 추가
     implementation group: 'org.json', name: 'json', version: '20160810'
+    //
 
     // Gson 추가
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
+    //
 
     // OKHttp 추가
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
-
-    // queryDSL 설정
-    implementation "com.querydsl:querydsl-jpa"
-    implementation "com.querydsl:querydsl-core"
-    implementation "com.querydsl:querydsl-collections"
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+    //
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -61,12 +56,24 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'com.h2database:h2'
+
+
+    // queryDSL 설정
+    implementation "com.querydsl:querydsl-jpa"
+    implementation "com.querydsl:querydsl-core"
+    implementation "com.querydsl:querydsl-collections"
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+
+    // s3 추가
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
 
 // Querydsl 설정부
 def generated = 'src/main/generated'
