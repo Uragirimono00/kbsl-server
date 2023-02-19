@@ -1,4 +1,4 @@
-package com.example.kbslserver;
+package com.example.kbslserver.boot.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

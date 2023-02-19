@@ -1,0 +1,76 @@
+server:
+  port: 8090
+  servlet:
+    context-path: /api/v1
+  max-http-request-header-size: 40MB
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  # 파일 업로드 용량 설정
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://db-es831.pub-cdb.ntruss.com:3306/KDT?serverTimezone=Asia/Seoul
+#    username: dxlab
+#    password: mirim2020!@
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 1000
+        order_insert: true
+        default_batch_fetch_size: 1000
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          discord:
+            clientId:
+            clientSecret:
+            scope:
+              - profile_nickname
+              - account_email
+              - profile_image
+            redirectUri: "https://localhost:8090/api/v1/auth/discord"
+            authorizationGrantType: authorization_code
+            clientName: discord
+            clientAuthenticationMethod: POST
+        provider:
+          kakao:
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userNameAttribute: id
+
+jwt:
+  header: Authorization
+  secret: pastisjustpast
+  token-validity-in-seconds: 86400
+
+log:
+  config:
+    path: ./logs
+    filename: console
+
+error:
+  log:
+    config:
+      filename: error

@@ -1,4 +1,4 @@
-package com.example.kbslserver;
+package com.example.kbslserver.boot.web;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -20,6 +20,24 @@ repositories {
 }
 
 dependencies {
+    // swagger v3
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+    // jwt 추가
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // json 추가
+    implementation group: 'org.json', name: 'json', version: '20160810'
+
+    // Gson 추가
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
+
+    // OKHttp 추가
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -39,3 +57,29 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+// Querydsl 설정부
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+    main.java.srcDirs += [ generated ]
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+    delete file(generated)
+}
+
+// Q파일 생성방법
+/*
+Gradle -> Tasks -> build -> clean
+
+Gradle -> Tasks -> build -> build 혹은 classes
+*/
