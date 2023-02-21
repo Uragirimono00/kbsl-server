@@ -9,6 +9,9 @@
 - JUnit (Test)
 - QueryDSL
 
+### CI / CD
+- Github Action
+
 ### Swagger
 http://localhost:8080/swagger-ui/index.html
 
