@@ -23,13 +23,13 @@ spring:
       max-request-size: 1024MB
 
   datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${db.url}:${db.port}}/${db.scheme}}?serverTimezone=Asia/Seoul
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${db.url}:${db.port}/${db.schema}
     username: ${db.username}
     password: ${db.password}
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
     show_sql: true
     generate-ddl: true
     hibernate:

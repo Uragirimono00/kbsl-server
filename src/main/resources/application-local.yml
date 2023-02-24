@@ -5,13 +5,13 @@ spring:
 
 
   datasource:
-    url: jdbc:h2:tcp://localhost/~/kbsl
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${db.url}:${db.port}/${db.schema}
+    username: ${db.username}
+    password: ${db.password}
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
     show_sql: true
     generate-ddl: true
     hibernate:
@@ -32,8 +32,8 @@ spring:
       client:
         registration:
           discord:
-            clientId: 1072886733156384929
-            clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
+            clientId: ${discord.client}
+            clientSecret: ${discord.secret}
             scope:
               - identify
             redirectUri: "http://localhost:8080/auth/discord"
