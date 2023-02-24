@@ -2,7 +2,7 @@
 - JAVA 11
 - Spring Boot 2.7.8
 - Spring Security (Security)
-- MySql
+- PostgreSQL
 - Swagger 3.0
 - JPA (ORM)
 - OAuth2.0 (Login) :: Discord
