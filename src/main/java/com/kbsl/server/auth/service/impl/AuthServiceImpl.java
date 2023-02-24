@@ -200,7 +200,7 @@ public class AuthServiceImpl implements AuthService {
     private Authentication getOAuthUserInfo(String providerName, OauthTokenResponse oauthTokenResponse, ClientRegistration provider) {
         Map<String, Object> oauthUserAttributes = getOAuthUserAttributes(provider, oauthTokenResponse);
         OAuthUserInfo oAuthUserInfo = null;
-        log.info("이것은 무엇?" + oauthUserAttributes.toString());
+        log.info(oauthUserAttributes.toString());
         if(providerName.equals("discord")) {
             oAuthUserInfo = new DiscordUserInfo(oauthUserAttributes);
         } else {
