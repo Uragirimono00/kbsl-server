@@ -25,6 +25,10 @@ public class UserController {
 
     @GetMapping("/{userSeq}")
     @Tag(name = "User")
+    @Operation(summary = "유저 조회 API",
+            description =
+                    "유저 시퀀스를 받아 해당 유저를 조회한다."
+    )
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserResponseDto> findUser(
             @PathVariable(value = "userSeq") Long userSeq
@@ -34,7 +38,7 @@ public class UserController {
 
     @PutMapping(value = "/{userSeq}")
     @Tag(name = "User")
-    @Operation(summary = "[관리자] 유저 수정 API",
+    @Operation(summary = "유저 비트리더ID 수정 API",
             description =
                     "앱에서 유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 수정한다. 이때, 요청자는 작성자의 유저 시퀀스와 일치해야한다."
     )
