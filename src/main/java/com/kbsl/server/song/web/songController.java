@@ -31,11 +31,8 @@ public class songController {
     @Tag(name = "Song")
     @Operation(summary = "[App] 노래 생성 API",
             description =
-                    "관리자의 Access Token 을 통해 과정을 생성한다.<br/>data 명세<br/>{\n" +
-                            "  \"courseName\": \"과정제목\",\n" +
-                            "  \"lessonTime\": 0 -> 과정 수료 인정시간,\n" +
-                            "  \"status\": \"사용 여부 1 or -1\"\n" +
-                            "}")
+                    "리그 시퀀스를 Path Variable 로 전달받아 해당 리그의 노래를 추가한다."
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음"),
@@ -53,7 +50,7 @@ public class songController {
     @Tag(name = "Song")
     @Operation(summary = "[App] 노래 단건 조회 API",
             description =
-                    "등록되어있는 노래 중 요청한 시퀀스 노래정보를 조회한다."
+                    "노래 시퀀스를 Path Variable 로 전달받아 해당 노래를 수정한다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),

@@ -27,8 +27,12 @@ public class UserController {
     @Tag(name = "User")
     @Operation(summary = "유저 조회 API",
             description =
-                    "유저 시퀀스를 받아 해당 유저를 조회한다."
+                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 조회한다."
     )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "조회 실패 - 유저 미조회")
+    })
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserResponseDto> findUser(
             @PathVariable(value = "userSeq") Long userSeq
@@ -40,7 +44,9 @@ public class UserController {
     @Tag(name = "User")
     @Operation(summary = "유저 비트리더ID 수정 API",
             description =
-                    "앱에서 유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 수정한다. 이때, 요청자는 작성자의 유저 시퀀스와 일치해야한다."
+                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 수정한다. \n" +
+                    "이때, 요청자는 작성자의 유저 시퀀스와 일치해야한다.\n" +
+                    "또한, 비트리더ID가 다른 계정에서 이미 사용중일 경우 예외를 발생시킨다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "유저 수정 성공"),

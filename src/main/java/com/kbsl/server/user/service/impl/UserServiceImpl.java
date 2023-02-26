@@ -65,32 +65,40 @@ public class UserServiceImpl implements UserService {
 
             // create param
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("stats ",true);
+            jsonObject.addProperty("stats ",false);
 
             HttpEntity<String> entity = new HttpEntity<String>(jsonObject.toString(), headers);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
+
             log.info(response.getBody()+"");
             log.info(response.getStatusCodeValue()+"");
+
+            if(!response.getBody().contains("\"country\":\"KR\""))
+                throw new RestException(HttpStatus.BAD_REQUEST, "국적이 한국이 아닙니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getBeatleaderId());
+
+            userEntity.update(userUpdateRequestDto);
+            UserResponseDto responseDto = UserResponseDto.builder().entity(userEntity).build();
+
+            return responseDto;
 
             //에러처리해야댐
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             log.info("error");
             log.info(e.toString());
             throw new RestException(HttpStatus.BAD_REQUEST, "존재하지 않는 Beatleader ID 입니다.");
+
         }
         catch (Exception e) {
             log.info(e.toString());
+
+            return null;
         }
 
         /**
          * 수정 후 리스폰스 엔티티에 담아 리턴
          */
-        userEntity.update(userUpdateRequestDto);
-        UserResponseDto responseDto = UserResponseDto.builder().entity(userEntity).build();
-
-        return null;
     }
 
     /**

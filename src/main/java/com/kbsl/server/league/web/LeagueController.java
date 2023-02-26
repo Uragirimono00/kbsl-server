@@ -30,11 +30,7 @@ public class LeagueController {
     @Tag(name = "League")
     @Operation(summary = "[App] 리그 생성 API",
             description =
-                    "관리자의 Access Token 을 통해 과정을 생성한다.<br/>data 명세<br/>{\n" +
-                            "  \"courseName\": \"과정제목\",\n" +
-                            "  \"lessonTime\": 0 -> 과정 수료 인정시간,\n" +
-                            "  \"status\": \"사용 여부 1 or -1\"\n" +
-                            "}")
+                    "요청자의 Access Token을 이용하여 리그를 생성한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "리그 생성 성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
@@ -50,7 +46,7 @@ public class LeagueController {
     @Tag(name = "League")
     @Operation(summary = "[App] 리그 전체 조회 API - Pagination",
             description =
-                    "모든 리그를 조회한다.")
+                    "모든 리그 정보를 elementCnt 개수 만큼 조회한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
@@ -67,7 +63,7 @@ public class LeagueController {
     @Tag(name = "League")
     @Operation(summary = "[App] 리그 상세 조회 API",
             description =
-                    "리그를 상세 조회한다.")
+                    "리그 시퀀스를 Path Variable 로 전달받아 해당 리그를 조회한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
