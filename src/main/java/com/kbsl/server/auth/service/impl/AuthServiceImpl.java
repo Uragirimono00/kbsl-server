@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.kbsl.server.auth.domain.model.AuthToken;
 import com.kbsl.server.auth.domain.repository.AuthTokenRepository;
-import com.kbsl.server.auth.domain.repository.RoleRepository;
 import com.kbsl.server.auth.dto.request.AccessTokenRefreshTokenDto;
 import com.kbsl.server.auth.dto.response.AccessTokenRefreshResponseDto;
 import com.kbsl.server.auth.dto.response.AuthLoginResponse;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
     private final JwtUtils jwtUtils;

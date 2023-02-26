@@ -56,10 +56,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
                         .antMatchers(PERMIT_URL_ARRAY).permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .antMatchers("/user/**").permitAll()
-                        .antMatchers("/file/**").permitAll()
-                        .antMatchers("/auth/**").permitAll()
-                        .antMatchers("/test/**").permitAll()
                         .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                         .and()

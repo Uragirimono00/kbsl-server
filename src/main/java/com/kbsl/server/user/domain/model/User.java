@@ -2,10 +2,13 @@ package com.kbsl.server.user.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kbsl.server.auth.enums.ERole;
+import com.kbsl.server.boot.domain.model.BaseEntity;
 import com.kbsl.server.user.dto.request.UserUpdateRequestDto;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 
 @Entity
@@ -13,7 +16,8 @@ import javax.persistence.*;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+@DynamicInsert
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -45,4 +49,7 @@ public class User {
         if (userUpdateRequestDto.getBeatleaderId() != null)
             this.beatleaderId = userUpdateRequestDto.getBeatleaderId();
     }
+
+
+
 }
