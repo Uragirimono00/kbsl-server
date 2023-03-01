@@ -31,8 +31,8 @@ public class AuthController {
             summary = "Discord 로그인 API",
             description = "Discord 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
                     " OAuth2를 사용해 로그인할 때는 해당 주소로 연결해야한다. <br>" +
-                    "<b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://localhost:8080/api/v1/auth/discord </a></b> <br>" +
-                    " Dev : " +
+                    " Local : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2Flocalhost%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://localhost:8090/api/v1/auth/discord </a></b> <br>" +
+                    " Dev : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2F52.79.222.211%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://52.79.222.211:8090/auth/discord </a></b> <br>" +
                     " Prod : "
     )
     @ApiResponses( {

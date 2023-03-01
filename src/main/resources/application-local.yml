@@ -36,7 +36,7 @@ spring:
             clientSecret: ${discord.secret}
             scope:
               - identify
-            redirectUri: "http://localhost:8080/auth/discord"
+            redirectUri: "http://localhost:8090/auth/discord"
             authorizationGrantType: authorization_code
             clientName: discord
             clientAuthenticationMethod: POST

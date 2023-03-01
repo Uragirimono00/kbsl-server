@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .antMatchers(PERMIT_URL_ARRAY).permitAll()
                         .antMatchers(HttpMethod.OPTIONS).permitAll()
                         .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
+                        .antMatchers("/**/auth/**").permitAll()
                         .anyRequest().authenticated()
                         .and()
                         .addFilterBefore(authJwtFilter, UsernamePasswordAuthenticationFilter.class)
