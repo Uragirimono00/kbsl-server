@@ -25,10 +25,8 @@ public class AuthToken extends BaseEntity {
 
     private Long userSeq;
 
-    @Column(columnDefinition = "varchar(1000)")
     private String accessToken;
 
-    @Column(columnDefinition = "varchar(1000)")
     private String refreshToken;
 
     public void updateAccessToken(String newAccessToken) {
