@@ -4,7 +4,7 @@ import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.song.domain.model.Song;
-import com.kbsl.server.song.domain.model.SongRepository;
+import com.kbsl.server.song.domain.repository.SongRepository;
 import com.kbsl.server.song.dto.request.SongSaveRequestDto;
 import com.kbsl.server.song.dto.response.SongResponseDto;
 import com.kbsl.server.song.service.SongService;

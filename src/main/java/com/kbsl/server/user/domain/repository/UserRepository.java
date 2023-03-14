@@ -12,5 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findBySeq(Long userSeq);
     Boolean existsBybeatleaderId(String beatleaderId);
 
-    List<User> findALL();
+    List<User> findByBeatleaderIdIsNotNull();
 }

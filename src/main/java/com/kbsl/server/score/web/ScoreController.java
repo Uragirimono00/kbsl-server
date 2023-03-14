@@ -29,9 +29,30 @@ public class ScoreController {
 
     @GetMapping(value = "")
     @Tag(name = "Score")
-    @Operation(summary = "[App] 노래 생성 API",
+    @Operation(summary = "[App] 점수 조회 API",
+            description =
+                    "노래 시퀀스를 전달받아 해당 노래에 점수를 조회한다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "리그 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Page<ScoreResponseDto>> findSongScore(
+            @RequestParam("songSeq") Long songSeq,
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
+            @RequestParam(required = false, defaultValue = "10") Integer elementCnt
+    ) throws Exception {
+        return ResponseEntity.ok(scoreService.findSongScore(songSeq, page, sort, elementCnt));
+    }
+
+    @GetMapping(value = "/adm")
+    @Tag(name = "Score")
+    @Operation(summary = "[App] 점수 조회 및 업데이트 API - JWT사용",
         description =
-            "리그 시퀀스를 Path Variable 로 전달받아 해당 리그의 노래를 추가한다."
+            "노래 시퀀스를 전달받아 해당 노래에 점수를 조회 및 업데이트 한다."
     )
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
@@ -39,12 +60,14 @@ public class ScoreController {
         @ApiResponse(responseCode = "404", description = "리그 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<ScoreResponseDto>> updatePlayerScore(
+    public ResponseEntity<Page<ScoreResponseDto>> updateSongScore(
         @RequestParam("songSeq") Long songSeq,
         @RequestParam(value = "page") Integer page,
         @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
         @RequestParam(required = false, defaultValue = "10") Integer elementCnt
     ) throws Exception {
-        return ResponseEntity.ok(scoreService.updatePlayerScore(songSeq, page, sort, elementCnt));
+        return ResponseEntity.ok(scoreService.updateSongScore(songSeq, page, sort, elementCnt));
     }
+
+
 }

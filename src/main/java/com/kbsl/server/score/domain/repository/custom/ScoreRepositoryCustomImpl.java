@@ -1,8 +1,9 @@
-package com.kbsl.server.league.domain.repository.custom;
+package com.kbsl.server.score.domain.repository.custom;
 
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.league.domain.model.QLeague;
-import com.kbsl.server.league.domain.repository.LeagueRepository;
+import com.kbsl.server.score.domain.model.QScore;
+import com.kbsl.server.score.domain.model.Score;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,24 +12,23 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LeagueRepositoryImpl implements LeagueRepositoryCustom {
-
+public class ScoreRepositoryCustomImpl implements ScoreRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private QLeague league = QLeague.league;
+    private QScore score = QScore.score;
+
     @Override
-    public Page<League> findAllLeagueWithPage(Pageable pageable, String sort) {
-        List<League> results = queryFactory.selectFrom(league)
-                .orderBy(league.createdDtime.desc())
+    public Page<Score> findAllScoreBySongSeqWithPage(Long songSeq, Pageable pageable, String sort) {
+        List<Score> results = queryFactory.selectFrom(score)
+                .where(score.song.seq.eq(songSeq))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long totalCount = queryFactory.select(league.count())
-                .from(league)
+        Long totalCount = queryFactory.select(score.count())
+                .from(score)
                 .fetchOne();
 
         return new PageImpl<>(results, pageable, totalCount);
