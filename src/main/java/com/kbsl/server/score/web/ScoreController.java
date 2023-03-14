@@ -29,7 +29,7 @@ public class ScoreController {
 
     @GetMapping(value = "")
     @Tag(name = "Score")
-    @Operation(summary = "[App] 점수 조회 API",
+    @Operation(summary = "[App] 점수 조회 API - Pagination",
             description =
                     "노래 시퀀스를 전달받아 해당 노래에 점수를 조회한다."
     )

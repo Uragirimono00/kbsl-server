@@ -1,13 +1,16 @@
 package com.kbsl.server.song.domain.model;
 
 import com.kbsl.server.boot.domain.model.BaseEntity;
+import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.song.enums.SongDifficultyType;
 import com.kbsl.server.song.enums.SongModeType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Slf4j
 @Entity
@@ -28,10 +31,28 @@ public class Song extends BaseEntity {
 
     private String songHash;
 
+    private String songName;
+
     @Enumerated(EnumType.STRING)
     private SongDifficultyType songDifficulty;
 
     @Enumerated(EnumType.STRING)
     private SongModeType songModeType;
+
+    private String uploaderName;
+
+    private String coverUrl;
+
+    private String previewUrl;
+
+    private String downloadUrl;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tb_league_song",
+            joinColumns = @JoinColumn(name = "songSeq"),
+            inverseJoinColumns = @JoinColumn(name = "leagueSeq")
+    )
+    private List<League> leagueList;
 
 }

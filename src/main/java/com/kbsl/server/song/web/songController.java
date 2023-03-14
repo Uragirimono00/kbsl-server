@@ -4,6 +4,7 @@ import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
 import com.kbsl.server.league.dto.response.LeagueResponseDto;
 import com.kbsl.server.league.service.LeagueService;
 import com.kbsl.server.song.dto.request.SongSaveRequestDto;
+import com.kbsl.server.song.dto.response.SongApiResponseDto;
 import com.kbsl.server.song.dto.response.SongResponseDto;
 import com.kbsl.server.song.service.SongService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,6 +63,24 @@ public class songController {
             @PathVariable Long songSeq
     ) throws Exception {
         return ResponseEntity.ok(songService.findSong(songSeq));
+    }
+
+    @GetMapping(value = "/id/{id}")
+    @Tag(name = "Song")
+    @Operation(summary = "[App] 노래 단건 조회 API",
+            description =
+                    "노래 시퀀스를 Path Variable 로 전달받아 해당 노래를 수정한다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "조회된 노래 없음")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<SongApiResponseDto>> findIdApi(
+            @PathVariable String id
+    ) throws Exception {
+        return ResponseEntity.ok(songService.findIdApi(id));
     }
 
 }

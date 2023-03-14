@@ -6,18 +6,27 @@ import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.domain.repository.SongRepository;
 import com.kbsl.server.song.dto.request.SongSaveRequestDto;
+import com.kbsl.server.song.dto.response.SongApiResponseDto;
 import com.kbsl.server.song.dto.response.SongResponseDto;
+import com.kbsl.server.song.enums.SongDifficultyType;
+import com.kbsl.server.song.enums.SongModeType;
 import com.kbsl.server.song.service.SongService;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
 import com.kbsl.server.user.service.principal.PrincipalUserDetail;
+import com.nimbusds.jose.shaded.json.JSONArray;
+import com.nimbusds.jose.shaded.json.JSONObject;
+import com.nimbusds.jose.shaded.json.JSONValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +100,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
+    @Transactional
     public SongResponseDto findSong(Long songSeq) throws Exception {
 
         //실제로 노래가 존재하는지 검사
@@ -99,4 +109,59 @@ public class SongServiceImpl implements SongService {
 
         return SongResponseDto.builder().entity(songEntity).build();
     }
+
+    @Override
+    @Transactional
+    public List<SongApiResponseDto> findIdApi(String id) throws Exception {
+
+        List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.beatsaver.com")
+                .pathSegment("maps", "id", id)
+                .encode()
+                .build()
+                .toUri();
+
+        log.info("Request URI: " + uri);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(uri, String.class);
+
+        /**
+         * BeatLeader 데이터가 존재하지 않을경우 패스한다.
+         */
+        JSONObject responseJson = (JSONObject) JSONValue.parse(response);
+        if (responseJson == null) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatLeader API: " + response);
+        }
+//        log.info(response);
+
+        JSONObject responseUploaderJson = (JSONObject) JSONValue.parse(responseJson.get("uploader").toString());
+        JSONArray responseVersionsJson = (JSONArray) JSONValue.parse(responseJson.get("versions").toString());
+
+        for (Object responseVersionObject : responseVersionsJson){
+            JSONObject responseVersionsJsonObject = (JSONObject) JSONValue.parse(responseVersionObject.toString());
+            JSONArray responseDiffsJson = (JSONArray) JSONValue.parse(responseVersionsJsonObject.get("diffs").toString());
+
+            for (Object responseDiffObject : responseDiffsJson) {
+                JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
+
+                Song songEntity = Song.builder()
+                        .songId(responseJson.get("id").toString())
+                        .songHash(responseVersionsJsonObject.get("hash").toString())
+                        .songName(responseJson.get("name").toString())
+                        .songDifficulty(SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString()))
+                        .songModeType(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()))
+                        .uploaderName(responseUploaderJson.get("name").toString())
+                        .coverUrl(responseVersionsJsonObject.get("coverURL").toString())
+                        .previewUrl(responseVersionsJsonObject.get("previewURL").toString())
+                        .downloadUrl(responseVersionsJsonObject.get("downloadURL").toString())
+                        .build();
+                songApiResponseDtoArrayList.add(SongApiResponseDto.builder().entity(songEntity).build());
+            }
+        }
+        return songApiResponseDtoArrayList;
+    }
+
 }

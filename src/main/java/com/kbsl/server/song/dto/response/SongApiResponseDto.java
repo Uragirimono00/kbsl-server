@@ -12,15 +12,12 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class SongResponseDto {
+public class SongApiResponseDto {
     @Schema(description = "노래 ID")
     private String songId;
 
     @Schema(description = "노래 해쉬")
     private String songHash;
-
-    @Schema(description = "노래 제목")
-    private String songName;
 
     @Schema(description = "노래 난이도", example = "ExpertPlus")
     private SongDifficultyType songDifficulty;
@@ -41,10 +38,9 @@ public class SongResponseDto {
     private String downloadUrl;
 
     @Builder
-    public SongResponseDto(Song entity) {
+    public SongApiResponseDto(Song entity) {
         this.songId = entity.getSongId();
         this.songHash = entity.getSongHash();
-        this.songName = entity.getSongName();
         this.songDifficulty = entity.getSongDifficulty();
         this.songModeType = entity.getSongModeType();
         this.uploaderName = entity.getUploaderName();
@@ -52,5 +48,4 @@ public class SongResponseDto {
         this.previewUrl = entity.getPreviewUrl();
         this.downloadUrl = entity.getDownloadUrl();
     }
-
 }

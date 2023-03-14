@@ -1,6 +1,9 @@
 package com.kbsl.server.score.service.impl;
 
+import com.kbsl.server.auth.domain.repository.AuthTokenRepository;
 import com.kbsl.server.boot.exception.RestException;
+import com.kbsl.server.league.domain.model.League;
+import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
@@ -36,6 +39,7 @@ import java.util.TimeZone;
 public class ScoreServiceImpl implements ScoreService {
 
     private final UserRepository userRepository;
+    private final LeagueRepository leagueRepository;
     private final SongRepository songRepository;
     private final ScoreRepository scoreRepository;
 
@@ -128,4 +132,5 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
                 .map(score -> ScoreResponseDto.builder().entity(score).build());
     }
+
 }
