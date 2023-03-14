@@ -47,10 +47,9 @@ public class ScoreServiceImpl implements ScoreService {
          */
         List<User> users = userRepository.findByBeatleaderIdIsNotNull();
         for (User user : users) {
-            String beatleaderId = user.getBeatleaderId();
             URI uri = UriComponentsBuilder
                     .fromUriString("https://api.beatleader.xyz")
-                    .pathSegment("score", beatleaderId, songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
+                    .pathSegment("score", user.getBeatleaderId(), songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
                     .encode()
                     .build()
                     .toUri();
