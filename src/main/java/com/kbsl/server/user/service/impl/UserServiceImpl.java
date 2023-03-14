@@ -88,11 +88,9 @@ public class UserServiceImpl implements UserService {
             log.info("error");
             log.info(e.toString());
             throw new RestException(HttpStatus.BAD_REQUEST, "존재하지 않는 Beatleader ID 입니다.");
-
         }
         catch (Exception e) {
             log.info(e.toString());
-
             return null;
         }
 

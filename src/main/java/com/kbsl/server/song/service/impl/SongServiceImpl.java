@@ -47,8 +47,8 @@ public class SongServiceImpl implements SongService {
         League leagueEntity = leagueRepository.findBySeq(leagueSeq)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 리그를 찾을 수 없습니다. leagueSeq=" + leagueSeq));
 
-        Integer success = 0;
-        Integer failed = 0;
+        int success = 0;
+        int failed = 0;
 
         List<Song> songEntityList = new ArrayList<>();
         List<SongResponseDto> songResponseDtoList = new ArrayList<>();

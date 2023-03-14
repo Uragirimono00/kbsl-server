@@ -39,12 +39,12 @@ public class LeagueServiceImpl implements LeagueService {
         /**
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
          */
-        PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PrincipalUserDetail userDetail = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /**
          * 유저에 대한 정보 및 추가 정보를 수정한다.
          */
-        User userEntity = userRepository.findBySeq(userDetails.getUserSeq())
+        User userEntity = userRepository.findBySeq(userDetail.getUserSeq())
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
         League leagueEntity = leagueRepository.save(leagueSaveRequestDto.toEntity(userEntity));

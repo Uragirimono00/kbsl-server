@@ -1,6 +1,7 @@
 package com.kbsl.server.score.domain.model;
 
 import com.kbsl.server.boot.domain.model.BaseEntity;
+import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.user.domain.model.User;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,9 +25,11 @@ public class Score extends BaseEntity {
     @JoinColumn(name = "userSeq")
     private User user;
 
-    private Long scoreSeq;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "songSeq")
+    private Song song;
 
-    private Long playerSeq;
+    private Long scoreSeq;
 
     private Long baseScore;
 
@@ -51,12 +54,6 @@ public class Score extends BaseEntity {
     private Double accRight;
 
     private String comment;
-
-    private String songSeq;
-
-    private String songHash;
-
-    private Integer songDifficulty;
 
     private Integer timePost;
 
