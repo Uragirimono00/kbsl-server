@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_score")
@@ -55,6 +56,6 @@ public class Score extends BaseEntity {
 
     private String comment;
 
-    private Integer timePost;
+    private LocalDateTime timePost;
 
 }

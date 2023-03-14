@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString
@@ -68,7 +69,7 @@ public class ScoreResponseDto {
     private String comment;
 
     @Schema(description = "기록된 시간 유닉스 타임")
-    private Integer timePost;
+    private LocalDateTime timePost;
 
     @Builder
     public ScoreResponseDto(Score entity) {

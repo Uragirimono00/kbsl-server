@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class LeagueController {
     private final LeagueService leagueService;
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "")
     @Tag(name = "League")
     @Operation(summary = "[App] 리그 생성 API",
             description =
@@ -42,7 +42,7 @@ public class LeagueController {
         return ResponseEntity.ok(leagueService.createLeague(leagueSaveRequestDto));
     }
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     @Tag(name = "League")
     @Operation(summary = "[App] 리그 전체 조회 API - Pagination",
             description =

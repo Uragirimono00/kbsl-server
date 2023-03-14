@@ -24,7 +24,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.TimeZone;
 
 @Slf4j
 @Service
@@ -67,6 +71,7 @@ public class ScoreServiceImpl implements ScoreService {
                 log.error("잘못된 JSON 응답입니다. BeatLeader API: " + response);
                 continue;
             }
+            log.info(responseJson.get("timepost").toString());
 
             /**
              * 이미 등록된 점수의 경우 패스한다.
@@ -93,8 +98,10 @@ public class ScoreServiceImpl implements ScoreService {
                     .accLeft(Double.parseDouble(responseJson.get("accLeft").toString()))
                     .accRight(Double.parseDouble(responseJson.get("accRight").toString()))
                     .comment("")
-                    .timePost(Integer.parseInt(responseJson.get("timepost").toString()))
+                    // timePost의 경우 한국시간으로 변환하기 위해 미국시간에서 9시간을 더한다.
+                    .timePost(LocalDateTime.ofEpochSecond(Long.parseLong(responseJson.get("timepost").toString()), 0, ZoneOffset.of("+09:00")))
                     .build();
+
 
             scoreRepository.save(score);
         }
