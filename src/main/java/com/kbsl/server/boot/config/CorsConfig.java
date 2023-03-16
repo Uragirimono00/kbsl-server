@@ -21,7 +21,9 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);   // 내 서버가 응답을 할 때 응답해준 json을 자바스크립트에서 처리할 수 있게 할지를 설정
-        corsConfiguration.addAllowedOrigin("*");       // 모든 ip에 응답 허용
+        corsConfiguration.addAllowedOriginPattern("*");
+
+//        corsConfiguration.addAllowedOrigin("*");       // 모든 ip에 응답 허용
         corsConfiguration.addAllowedHeader("*");       // 모든 header에 응답 허용
         corsConfiguration.addAllowedMethod("*");       // 모든 HTTP Method 요청 허용
 

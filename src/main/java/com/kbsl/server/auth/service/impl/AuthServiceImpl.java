@@ -105,6 +105,8 @@ public class AuthServiceImpl implements AuthService {
 
         ClientRegistration provider = inMemoryClientRegistrationRepository.findByRegistrationId(provierName);;
 
+        log.info(code);
+
         OauthTokenResponse oauthTokenResponse = getToken(code, provider);
 
         Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);;
