@@ -36,7 +36,7 @@ spring:
             clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
             scope:
               - identify
-            redirectUri: "http://localhost:8080/auth/discord"
+            redirectUri: "http://52.79.222.211:8090/auth/discord"
             authorizationGrantType: authorization_code
             clientName: discord
             clientAuthenticationMethod: POST
