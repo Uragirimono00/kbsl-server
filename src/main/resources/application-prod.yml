@@ -3,7 +3,6 @@ spring:
     activate:
       on-profile: prod
 
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://kbsl.c2qhbfzv8kxa.ap-northeast-2.rds.amazonaws.com:5432/kbsl
@@ -36,7 +35,7 @@ spring:
             clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
             scope:
               - identify
-            redirectUri: "http://52.79.222.211:8090/auth/discord"
+            redirectUri: "http://52.79.222.211:8090/api/v1/user/auth"
             authorizationGrantType: authorization_code
             clientName: discord
             clientAuthenticationMethod: POST
