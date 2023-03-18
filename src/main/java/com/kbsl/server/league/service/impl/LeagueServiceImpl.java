@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,9 +59,23 @@ public class LeagueServiceImpl implements LeagueService {
 
         // 페이징 객체를 생성한다.
         Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+        Page<League> leagues = leagueRepository.findAllLeagueWithPage(pageable, sort);
+        return leagues.map(this::convertToLeagueResponseDto);
+    }
 
-        return leagueRepository.findAllLeagueWithPage(pageable, sort)
-                .map(league -> LeagueResponseDto.builder().entity(league).build());
+    private LeagueResponseDto convertToLeagueResponseDto(League league) {
+        String status = "진행중";
+
+        if (LocalDateTime.now().isBefore(league.getLeagueStartDtime())) {
+            status = "대기중";
+        } else if (LocalDateTime.now().isAfter(league.getLeagueEndDtime())) {
+            status = "종료";
+        }
+
+        return LeagueResponseDto.builder()
+                .entity(league)
+                .leagueStatus(status)
+                .build();
     }
 
     @Override

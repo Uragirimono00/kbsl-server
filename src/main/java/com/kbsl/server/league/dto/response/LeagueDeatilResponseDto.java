@@ -47,12 +47,15 @@ public class LeagueDeatilResponseDto {
     @Schema(description = "노래 리스트")
     private List<SongResponseDto> songsList;
 
+    @Schema(description = "현재 리그 상태")
+    private String leagueStatus;
+
     public void setSongsList(List<SongResponseDto> songsList) {
         this.songsList = songsList;
     }
 
     @Builder
-    public LeagueDeatilResponseDto(League entity) {
+    public LeagueDeatilResponseDto(League entity, String leagueStatus) {
         this.seq = entity.getSeq();
         this.userSeq = entity.getUser().getSeq();
         this.userName = entity.getUser().getUsername();
@@ -64,6 +67,7 @@ public class LeagueDeatilResponseDto {
         this.songsList = entity.getSongsList().stream()
                 .map(SongResponseDto::new)
                 .collect(Collectors.toList());
+        this.leagueStatus = leagueStatus;
     }
 
 }

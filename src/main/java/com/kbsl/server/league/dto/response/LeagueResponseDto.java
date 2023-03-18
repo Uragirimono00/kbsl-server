@@ -45,8 +45,11 @@ public class LeagueResponseDto {
     @Schema(description = "리그 설명")
     private String description;
 
+    @Schema(description = "현재 리그 상태")
+    private String leagueStatus;
+
     @Builder
-    public LeagueResponseDto(League entity) {
+    public LeagueResponseDto(League entity, String leagueStatus) {
         this.seq = entity.getSeq();
         this.userSeq = entity.getUser().getSeq();
         this.userName = entity.getUser().getUsername();
@@ -55,5 +58,6 @@ public class LeagueResponseDto {
         this.leagueStartDtime = entity.getLeagueStartDtime();
         this.leagueEndDtime = entity.getLeagueEndDtime();
         this.description = entity.getDescription();
+        this.leagueStatus = leagueStatus;
     }
 }
