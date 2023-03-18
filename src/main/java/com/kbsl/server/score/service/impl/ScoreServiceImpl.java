@@ -55,59 +55,65 @@ public class ScoreServiceImpl implements ScoreService {
          */
         List<User> users = userRepository.findByBeatleaderIdIsNotNull();
         for (User user : users) {
-            URI uri = UriComponentsBuilder
-                    .fromUriString("https://api.beatleader.xyz")
-                    .pathSegment("score", user.getBeatleaderId(), songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
-                    .encode()
-                    .build()
-                    .toUri();
+            try{
+                URI uri = UriComponentsBuilder
+                        .fromUriString("https://api.beatleader.xyz")
+                        .pathSegment("score", user.getBeatleaderId(), songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
+                        .encode()
+                        .build()
+                        .toUri();
 
-            log.info("Request URI: " + uri);
+                log.info("Request URI: " + uri);
 
-            RestTemplate restTemplate = new RestTemplate();
-            String response = restTemplate.getForObject(uri, String.class);
+                RestTemplate restTemplate = new RestTemplate();
+                String response = restTemplate.getForObject(uri, String.class);
 
-            /**
-             * BeatLeader 데이터가 존재하지 않을경우 패스한다.
-             */
-            JSONObject responseJson = (JSONObject) JSONValue.parse(response);
-            if (responseJson == null) {
-                log.error("잘못된 JSON 응답입니다. BeatLeader API: " + response);
+                /**
+                 * BeatLeader 데이터가 존재하지 않을경우 패스한다.
+                 */
+                JSONObject responseJson = (JSONObject) JSONValue.parse(response);
+                if (responseJson == null) {
+                    log.error("잘못된 JSON 응답입니다. BeatLeader API: " + response);
+                    continue;
+                }
+                log.info(responseJson.get("timepost").toString());
+
+                /**
+                 * 이미 등록된 점수의 경우 패스한다.
+                 */
+                long scoreSeq = Long.parseLong(responseJson.get("id").toString());
+                if (scoreRepository.existsByScoreSeq(scoreSeq)) {
+                    log.info("이미 등록된 스코어 입니다. scoreSeq = " + scoreSeq);
+                    continue;
+                }
+
+                Score score = Score.builder()
+                        .user(user)
+                        .song(songEntity)
+                        .scoreSeq(scoreSeq)
+                        .baseScore(Long.parseLong(responseJson.get("baseScore").toString()))
+                        .modifiedScore(Long.parseLong(responseJson.get("modifiedScore").toString()))
+                        .accuracy(Double.parseDouble(responseJson.get("accuracy").toString()))
+                        .badCut(Integer.parseInt(responseJson.get("badCuts").toString()))
+                        .missedNote(Integer.parseInt(responseJson.get("badCuts").toString()))
+                        .bombCut(Integer.parseInt(responseJson.get("badCuts").toString()))
+                        .wallsHit(Integer.parseInt(responseJson.get("wallsHit").toString()))
+                        .pause(Integer.parseInt(responseJson.get("pauses").toString()))
+                        .playCount(Integer.parseInt(responseJson.get("playCount").toString()))
+                        .accLeft(Double.parseDouble(responseJson.get("accLeft").toString()))
+                        .accRight(Double.parseDouble(responseJson.get("accRight").toString()))
+                        .comment("")
+                        // timePost의 경우 한국시간으로 변환하기 위해 미국시간에서 9시간을 더한다.
+                        .timePost(LocalDateTime.ofEpochSecond(Long.parseLong(responseJson.get("timepost").toString()), 0, ZoneOffset.of("+09:00")))
+                        .build();
+
+                scoreRepository.save(score);
+
+            }catch (Exception e){
+                log.error(e.toString());
                 continue;
             }
-            log.info(responseJson.get("timepost").toString());
 
-            /**
-             * 이미 등록된 점수의 경우 패스한다.
-             */
-            long scoreSeq = Long.parseLong(responseJson.get("id").toString());
-            if (scoreRepository.existsByScoreSeq(scoreSeq)) {
-                log.info("이미 등록된 스코어 입니다. scoreSeq = " + scoreSeq);
-                continue;
-            }
-
-            Score score = Score.builder()
-                    .user(user)
-                    .song(songEntity)
-                    .scoreSeq(scoreSeq)
-                    .baseScore(Long.parseLong(responseJson.get("baseScore").toString()))
-                    .modifiedScore(Long.parseLong(responseJson.get("modifiedScore").toString()))
-                    .accuracy(Double.parseDouble(responseJson.get("accuracy").toString()))
-                    .badCut(Integer.parseInt(responseJson.get("badCuts").toString()))
-                    .missedNote(Integer.parseInt(responseJson.get("badCuts").toString()))
-                    .bombCut(Integer.parseInt(responseJson.get("badCuts").toString()))
-                    .wallsHit(Integer.parseInt(responseJson.get("wallsHit").toString()))
-                    .pause(Integer.parseInt(responseJson.get("pauses").toString()))
-                    .playCount(Integer.parseInt(responseJson.get("playCount").toString()))
-                    .accLeft(Double.parseDouble(responseJson.get("accLeft").toString()))
-                    .accRight(Double.parseDouble(responseJson.get("accRight").toString()))
-                    .comment("")
-                    // timePost의 경우 한국시간으로 변환하기 위해 미국시간에서 9시간을 더한다.
-                    .timePost(LocalDateTime.ofEpochSecond(Long.parseLong(responseJson.get("timepost").toString()), 0, ZoneOffset.of("+09:00")))
-                    .build();
-
-
-            scoreRepository.save(score);
         }
 
         /**
