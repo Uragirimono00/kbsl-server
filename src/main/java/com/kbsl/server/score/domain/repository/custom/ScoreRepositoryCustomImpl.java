@@ -25,6 +25,7 @@ public class ScoreRepositoryCustomImpl implements ScoreRepositoryCustom {
     public Page<Score> findAllScoreBySongSeqWithPage(Long songSeq, Pageable pageable, String sort) {
         List<Score> results = queryFactory.selectFrom(score)
                 .where(score.song.seq.eq(songSeq))
+                .orderBy(score.modifiedScore.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
