@@ -1,0 +1,1 @@
+java -jar /var/lib/jenkins/workspace/kbsl/build/libs/kbsl-server-0.0.1-SNAPSHOT.war --spring.profiles.active=prod --server.port=443
