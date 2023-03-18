@@ -14,7 +14,6 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "tb_user")
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 public class User extends BaseEntity {

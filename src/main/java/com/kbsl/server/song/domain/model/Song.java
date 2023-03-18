@@ -47,12 +47,4 @@ public class Song extends BaseEntity {
 
     private String downloadUrl;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "tb_league_song",
-            joinColumns = @JoinColumn(name = "songSeq"),
-            inverseJoinColumns = @JoinColumn(name = "leagueSeq")
-    )
-    private List<League> leagueList;
-
 }

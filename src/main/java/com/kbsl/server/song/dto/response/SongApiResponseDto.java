@@ -17,7 +17,10 @@ public class SongApiResponseDto {
     private String songId;
 
     @Schema(description = "노래 해쉬")
-    private String songHash;
+    private String songHash;    
+    
+    @Schema(description = "노래 제목")
+    private String songName;
 
     @Schema(description = "노래 난이도", example = "ExpertPlus")
     private SongDifficultyType songDifficulty;
@@ -40,6 +43,7 @@ public class SongApiResponseDto {
     @Builder
     public SongApiResponseDto(Song entity) {
         this.songId = entity.getSongId();
+        this.songName = entity.getSongName();
         this.songHash = entity.getSongHash();
         this.songDifficulty = entity.getSongDifficulty();
         this.songModeType = entity.getSongModeType();

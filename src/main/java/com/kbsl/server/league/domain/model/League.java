@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "tb_league")
 @Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -37,12 +36,7 @@ public class League extends BaseEntity {
 
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "tb_league_song",
-            joinColumns = @JoinColumn(name = "leagueSeq"),
-            inverseJoinColumns = @JoinColumn(name = "songSeq")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Song> songsList;
 
     public void setSongsList(List<Song> songsList) {

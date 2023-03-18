@@ -56,48 +56,38 @@ public class SongServiceImpl implements SongService {
         League leagueEntity = leagueRepository.findBySeq(leagueSeq)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 리그를 찾을 수 없습니다. leagueSeq=" + leagueSeq));
 
-        int success = 0;
-        int failed = 0;
-
-        List<Song> songEntityList = new ArrayList<>();
         List<SongResponseDto> songResponseDtoList = new ArrayList<>();
-        Song songEntity = new Song();
 
-        try {
-            for(SongSaveRequestDto eachSong : songSaveRequestDto) {
+        for (SongSaveRequestDto eachSong : songSaveRequestDto) {
+            log.info(eachSong.toString());
 
-                log.info(eachSong.toString());
-                //엔티티에 추가할 노래 엔티티 생성
-                songEntity = Song.builder()
-                        .songId(eachSong.getSongId())
-                        .songHash(eachSong.getSongHash())
-                        .songDifficulty(eachSong.getSongDifficulty())
-                        .songModeType(eachSong.getSongModeType())
-                        .build();
+            Song alreadySongEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(
+                    eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
-                // 영속성 컨텍스트 업데이트
-                songEntityList = leagueEntity.getSongsList();
-                log.info(String.format("leagueSeq: %d, courseFileEntity: %s", leagueSeq, songEntityList.toString()));
-                songEntityList.add(songEntity);
+            Song songEntity = alreadySongEntity != null ? alreadySongEntity : Song.builder()
+                    .songId(eachSong.getSongId())
+                    .songName(eachSong.getSongName())
+                    .songHash(eachSong.getSongHash())
+                    .songDifficulty(eachSong.getSongDifficulty())
+                    .songModeType(eachSong.getSongModeType())
+                    .downloadUrl(eachSong.getDownloadUrl())
+                    .previewUrl(eachSong.getPreviewUrl())
+                    .coverUrl(eachSong.getCoverUrl())
+                    .uploaderName(eachSong.getUploaderName())
+                    .build();
 
-                // ResponseDto 생성
-                songResponseDtoList.add(
-                        SongResponseDto.builder()
-                                .entity(songEntity)
-                                .build()
-                );
-                success += 1;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            failed += 1;
+            leagueEntity.getSongsList().add(songEntity);
+
+            songResponseDtoList.add(SongResponseDto.builder().entity(songEntity).build());
         }
 
-
-        log.info(String.format("[%s - %d seq] 에 파일이 업로드 되었습니다. 성공: %d건, 실패: %d건", leagueEntity.getLeagueName(), leagueSeq, success, failed));
+        log.info(String.format("[%s - %d seq] 에 파일이 업로드 되었습니다. 성공: %d건, 실패: %d건",
+                leagueEntity.getLeagueName(), leagueSeq, songSaveRequestDto.size(), 0));
 
         return songResponseDtoList;
     }
+
+
 
     @Override
     @Transactional
