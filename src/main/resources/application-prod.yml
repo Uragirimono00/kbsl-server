@@ -3,7 +3,11 @@ server:
   servlet:
     #    context-path: /api/v1
     max-http-header-size: 40MB
-
+  ssl:
+    enabled: true
+    key-store: keystore.p12
+    key-store-type: PKCS12
+    key-store-password: gudtj0530!
 spring:
   config:
     activate:
