@@ -10,7 +10,7 @@
 - QueryDSL
 
 ### CI / CD
-- Github Action
+- Jenkins
 
 ### Swagger
 http://52.79.222.211:8090/swagger-ui/index.html
