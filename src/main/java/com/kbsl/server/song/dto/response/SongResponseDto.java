@@ -13,6 +13,8 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class SongResponseDto {
+    @Schema(description = "노래 시퀀스")
+    private Long seq;
     @Schema(description = "노래 ID")
     private String songId;
 
@@ -42,6 +44,7 @@ public class SongResponseDto {
 
     @Builder
     public SongResponseDto(Song entity) {
+        this.seq = entity.getSeq();
         this.songId = entity.getSongId();
         this.songHash = entity.getSongHash();
         this.songName = entity.getSongName();
