@@ -53,12 +53,12 @@ public class ScoreServiceImpl implements ScoreService {
         /**
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
          */
-        List<User> users = userRepository.findByBeatleaderIdIsNotNull();
+        List<User> users = userRepository.findBySteamIdIsNotNull();
         for (User user : users) {
             try{
                 URI uri = UriComponentsBuilder
                         .fromUriString("https://api.beatleader.xyz")
-                        .pathSegment("score", user.getBeatleaderId(), songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
+                        .pathSegment("score", user.getSteamId(), songEntity.getSongHash(), songEntity.getSongDifficulty().toString(), songEntity.getSongModeType().toString())
                         .encode()
                         .build()
                         .toUri();

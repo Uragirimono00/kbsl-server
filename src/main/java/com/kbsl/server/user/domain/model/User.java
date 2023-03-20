@@ -28,16 +28,16 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ERole eRole;
 
-    private String beatleaderId;
+    private String steamId;
 
     @Builder
-    public User(Long seq, String password, String username, String imageUrl, ERole eRole, String beatleaderId) {
+    public User(Long seq, String password, String username, String imageUrl, ERole eRole, String steamId) {
         this.seq = seq;
         this.password = password;
         this.username = username;
         this.imageUrl = imageUrl;
         this.eRole = eRole;
-        this.beatleaderId = beatleaderId;
+        this.steamId = steamId;
     }
 
     /**
@@ -45,8 +45,8 @@ public class User extends BaseEntity {
      * @param userUpdateRequestDto
      */
     public void update(UserUpdateRequestDto userUpdateRequestDto) {
-        if (userUpdateRequestDto.getBeatleaderId() != null)
-            this.beatleaderId = userUpdateRequestDto.getBeatleaderId();
+        if (userUpdateRequestDto.getSteamId() != null)
+            this.steamId = userUpdateRequestDto.getSteamId();
     }
 
 

@@ -9,6 +9,6 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class UserUpdateRequestDto {
-    @Schema(description = "비트리더 경로")
-    private String beatleaderId;
+    @Schema(description = "Steam Id")
+    private String steamId;
 }

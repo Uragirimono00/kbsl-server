@@ -57,13 +57,13 @@ public class UserController {
         return ResponseEntity.ok(userService.findAtInfo(Authorization));
     }
 
-    @PutMapping(value = "/{userSeq}")
+    @PutMapping(value = "/beatleader/{userSeq}")
     @Tag(name = "User")
-    @Operation(summary = "유저 비트리더ID 수정 API",
+    @Operation(summary = "유저 Steam ID 수정 API - beatleader",
             description =
                     "유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 수정한다. \n" +
                     "이때, 요청자는 작성자의 유저 시퀀스와 일치해야한다.\n" +
-                    "또한, 비트리더ID가 다른 계정에서 이미 사용중일 경우 예외를 발생시킨다."
+                    "또한, Steam Id가 다른 계정에서 이미 사용중일 경우 예외를 발생시킨다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "유저 수정 성공"),
@@ -71,11 +71,33 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "수정 실패 - 유저 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> updateUser(
+    public ResponseEntity<UserResponseDto> updateSteamIdWithBeatLeader(
             @PathVariable("userSeq") Long userSeq,
             @RequestBody UserUpdateRequestDto userUpdateRequestDto
     ) throws Exception {
-        return ResponseEntity.ok(userService.updateUser(userSeq, userUpdateRequestDto));
+        return ResponseEntity.ok(userService.updateSteamIdWithBeatLeader(userSeq, userUpdateRequestDto));
     }
+
+    @PutMapping(value = "/steam/{userSeq}")
+    @Tag(name = "User")
+    @Operation(summary = "유저 Steam ID 수정 API - steam",
+            description =
+                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저를 수정한다. \n" +
+                            "이때, 요청자는 작성자의 유저 시퀀스와 일치해야한다.\n" +
+                            "또한, Steam Id가 다른 계정에서 이미 사용중일 경우 예외를 발생시킨다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "유저 수정 성공"),
+            @ApiResponse(responseCode = "403", description = "수정 실패 - 요청자와 작성자 미일치"),
+            @ApiResponse(responseCode = "404", description = "수정 실패 - 유저 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserResponseDto> updateSteamId(
+            @PathVariable("userSeq") Long userSeq,
+            @RequestBody UserUpdateRequestDto userUpdateRequestDto
+    ) throws Exception {
+        return ResponseEntity.ok(userService.updateSteamId(userSeq, userUpdateRequestDto));
+    }
+
 }
 

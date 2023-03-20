@@ -37,7 +37,7 @@ public class UserResponseDto {
         this.userName = entity.getUsername();
         this.imageUrl = entity.getImageUrl();
         this.eRole = entity.getERole();
-        this.beatleaderId = entity.getBeatleaderId();
+        this.beatleaderId = entity.getSteamId();
     }
 
 }

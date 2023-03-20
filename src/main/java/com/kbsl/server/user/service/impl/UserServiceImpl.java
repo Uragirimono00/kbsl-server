@@ -49,11 +49,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto updateUser(Long userSeq, UserUpdateRequestDto userUpdateRequestDto) {
+    public UserResponseDto updateSteamIdWithBeatLeader(Long userSeq, UserUpdateRequestDto userUpdateRequestDto) {
         User userEntity = userRepository.findBySeq(userSeq)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
-        if (userRepository.existsBybeatleaderId(userUpdateRequestDto.getBeatleaderId()))
-            throw new RestException(HttpStatus.BAD_REQUEST, "이미 존재하는 유저입니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getBeatleaderId());
+        if (userRepository.existsBySteamId(userUpdateRequestDto.getSteamId()))
+            throw new RestException(HttpStatus.BAD_REQUEST, "이미 존재하는 유저입니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getSteamId());
 
         /**
          * 작성자와 요청자의 시퀀스가 일치하는지 확인한다. 그렇지 않을 경우, 예외를 발생시킨다.
@@ -62,14 +62,14 @@ public class UserServiceImpl implements UserService {
         validateUser(userDetails, userEntity);
 
         try {
-            Long.parseLong(userUpdateRequestDto.getBeatleaderId());
+            Long.parseLong(userUpdateRequestDto.getSteamId());
         }catch (NumberFormatException e){
-            throw new RestException(HttpStatus.BAD_REQUEST, "BeatleaderID는 숫자로 되어있어야 합니다. BeatleaderId = " + userUpdateRequestDto.getBeatleaderId());
+            throw new RestException(HttpStatus.BAD_REQUEST, "steamId는 숫자로 되어있어야 합니다. steamId = " + userUpdateRequestDto.getSteamId());
         }
 
         URI uri = UriComponentsBuilder
                 .fromUriString("https://api.beatleader.xyz")
-                .pathSegment("player", userUpdateRequestDto.getBeatleaderId())
+                .pathSegment("player", userUpdateRequestDto.getSteamId())
                 .encode()
                 .build()
                 .toUri();
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         try {
             response = restTemplate.getForObject(uri, String.class);
         }catch (Exception e){
-            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatleaderId = " + userUpdateRequestDto.getBeatleaderId());
+            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. steamId = " + userUpdateRequestDto.getSteamId());
         }
 
         log.info(response);
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
         JSONObject responseJson = (JSONObject) JSONValue.parse(response);
         if (responseJson == null) {
             log.error("잘못된 JSON 응답입니다. BeatLeader API: " + response);
-            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatleaderId = " + userUpdateRequestDto.getBeatleaderId());
+            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. steamId = " + userUpdateRequestDto.getSteamId());
         }
 
         /**
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
          */
         String country = responseJson.get("country").toString();
         if (!country.equals("KR")) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "국적이 한국이 아닙니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getBeatleaderId());
+            throw new RestException(HttpStatus.BAD_REQUEST, "국적이 한국이 아닙니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getSteamId());
         }
 
         /**
@@ -112,6 +112,34 @@ public class UserServiceImpl implements UserService {
         return responseDto;
 
     }
+
+    @Override
+    @Transactional
+    public UserResponseDto updateSteamId(Long userSeq, UserUpdateRequestDto userUpdateRequestDto) throws Exception {
+        User userEntity = userRepository.findBySeq(userSeq)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
+        if (userRepository.existsBySteamId(userUpdateRequestDto.getSteamId()))
+            throw new RestException(HttpStatus.BAD_REQUEST, "이미 존재하는 유저입니다. https://www.beatleader.xyz/u/" + userUpdateRequestDto.getSteamId());
+
+        /**
+         * 작성자와 요청자의 시퀀스가 일치하는지 확인한다. 그렇지 않을 경우, 예외를 발생시킨다.
+         */
+        PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        validateUser(userDetails, userEntity);
+
+        try {
+            Long.parseLong(userUpdateRequestDto.getSteamId());
+        }catch (NumberFormatException e){
+            throw new RestException(HttpStatus.BAD_REQUEST, "steamId는 숫자로 되어있어야 합니다. steamId = " + userUpdateRequestDto.getSteamId());
+        }
+
+        /**
+         * 수정 후 리스폰스 엔티티에 담아 리턴
+         */
+        userEntity.update(userUpdateRequestDto);
+        UserResponseDto responseDto = UserResponseDto.builder().entity(userEntity).build();
+
+        return responseDto;    }
 
     @Override
     @Transactional
