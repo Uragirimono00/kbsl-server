@@ -1,5 +1,8 @@
 package com.kbsl.server.score.web;
 
+import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
+import com.kbsl.server.league.dto.response.LeagueResponseDto;
+import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
 import com.kbsl.server.song.dto.request.SongSaveRequestDto;
@@ -69,5 +72,19 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.updateSongScore(songSeq, page, sort, elementCnt));
     }
 
-
+    @PostMapping(value = "/score/{steamId}")
+    @Tag(name = "Score")
+    @Operation(summary = "[App] 점수 제출 API",
+            description =
+                    "요청자의 steamId를 이용하여 점수를 저장한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "점수 저장 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ScoreResponseDto> saveScoreWithSteamId(
+            @RequestBody ScoreSaveRequestDto scoreSaveRequestDto
+    ) throws Exception {
+        return ResponseEntity.ok(scoreService.saveScoreWithSteamId(scoreSaveRequestDto));
+    }
 }

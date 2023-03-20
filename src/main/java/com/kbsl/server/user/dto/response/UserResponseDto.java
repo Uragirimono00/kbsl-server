@@ -29,7 +29,7 @@ public class UserResponseDto {
     private ERole eRole;
 
     @Schema(description = "비트리더 ID")
-    private String beatleaderId;
+    private String steamId;
 
     @Builder
     public UserResponseDto(User entity) {
@@ -37,7 +37,7 @@ public class UserResponseDto {
         this.userName = entity.getUsername();
         this.imageUrl = entity.getImageUrl();
         this.eRole = entity.getERole();
-        this.beatleaderId = entity.getSteamId();
+        this.steamId = entity.getSteamId();
     }
 
 }

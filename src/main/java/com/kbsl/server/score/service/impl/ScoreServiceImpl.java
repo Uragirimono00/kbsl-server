@@ -6,6 +6,7 @@ import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
+import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
 import com.kbsl.server.song.domain.model.Song;
@@ -137,6 +138,12 @@ public class ScoreServiceImpl implements ScoreService {
 
         return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
                 .map(score -> ScoreResponseDto.builder().entity(score).build());
+    }
+
+    @Override
+    @Transactional
+    public ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto scoreSaveRequestDto) throws Exception {
+        return null;
     }
 
 }

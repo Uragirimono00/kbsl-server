@@ -3,6 +3,7 @@ package com.kbsl.server.league.web;
 import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
 import com.kbsl.server.league.dto.response.LeagueDeatilResponseDto;
 import com.kbsl.server.league.dto.response.LeagueResponseDto;
+import com.kbsl.server.league.enums.LeagueStatusType;
 import com.kbsl.server.league.service.LeagueService;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,10 +55,11 @@ public class LeagueController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<LeagueResponseDto>> findLeagues(
             @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "leagueStatusType") LeagueStatusType leagueStatusType,
             @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
             @RequestParam(required = false, defaultValue = "10") Integer elementCnt
     ) throws Exception {
-        return ResponseEntity.ok(leagueService.findLeagues(page, sort, elementCnt));
+        return ResponseEntity.ok(leagueService.findLeagues(page, leagueStatusType, sort, elementCnt));
     }
 
     @GetMapping(value = "/{leagueSeq}")

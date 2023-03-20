@@ -6,8 +6,8 @@ import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
 import com.kbsl.server.league.dto.response.LeagueDeatilResponseDto;
 import com.kbsl.server.league.dto.response.LeagueResponseDto;
+import com.kbsl.server.league.enums.LeagueStatusType;
 import com.kbsl.server.league.service.LeagueService;
-import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.song.domain.model.Song;
@@ -26,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,18 +69,20 @@ public class LeagueServiceImpl implements LeagueService {
     /**
      * 전체 리그를 조회한다. - Pagination
      * 현재 리그의 상태를 함께 전송한다.
+     *
      * @param page
+     * @param leagueStatusType
      * @param sort
      * @param elementCnt
      * @return
      */
     @Override
     @Transactional
-    public Page<LeagueResponseDto> findLeagues(Integer page, String sort, Integer elementCnt) {
+    public Page<LeagueResponseDto> findLeagues(Integer page, LeagueStatusType leagueStatusType, String sort, Integer elementCnt) {
 
         // 페이징 객체를 생성한다.
         Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
-        Page<League> leagues = leagueRepository.findAllLeagueWithPage(pageable, sort);
+        Page<League> leagues = leagueRepository.findAllLeagueWithPage(pageable, leagueStatusType, sort);
         return leagues.map(this::convertToLeagueResponseDto);
     }
 
