@@ -1,6 +1,8 @@
 package com.kbsl.server.user.service.impl;
 
 import com.google.gson.JsonObject;
+import com.kbsl.server.auth.domain.model.AuthToken;
+import com.kbsl.server.auth.domain.repository.AuthTokenRepository;
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final AuthTokenRepository authTokenRepository;
 
     @Override
     @Transactional
@@ -108,6 +111,18 @@ public class UserServiceImpl implements UserService {
 
         return responseDto;
 
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDto findAtInfo(String authorization) throws Exception {
+        AuthToken authTokenEntity = authTokenRepository.findByAccessToken(authorization)
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
+
+        User userEntity = userRepository.findBySeq(authTokenEntity.getUserSeq())
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
+
+        return UserResponseDto.builder().entity(userEntity).build();
     }
 
     /**

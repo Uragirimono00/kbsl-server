@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthLoginResponse {
     private Long userSeq;
-    private String username;
+    private String userName;
     private ERole eRole;
     private String tokenType = "Bearer ";
     private String accessToken;
@@ -17,9 +17,9 @@ public class AuthLoginResponse {
     private String imageUrl;
 
     @Builder
-    public AuthLoginResponse(Long userSeq, String username, ERole eRole, String accessToken, String refreshToken, String imageUrl) {
+    public AuthLoginResponse(Long userSeq, String userName, ERole eRole, String accessToken, String refreshToken, String imageUrl) {
         this.userSeq = userSeq;
-        this.username = username;
+        this.userName = userName;
         this.eRole = eRole;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;

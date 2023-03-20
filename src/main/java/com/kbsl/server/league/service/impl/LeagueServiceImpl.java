@@ -7,7 +7,11 @@ import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
 import com.kbsl.server.league.dto.response.LeagueDeatilResponseDto;
 import com.kbsl.server.league.dto.response.LeagueResponseDto;
 import com.kbsl.server.league.service.LeagueService;
+import com.kbsl.server.score.domain.model.Score;
+import com.kbsl.server.score.domain.repository.ScoreRepository;
+import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.song.domain.model.Song;
+import com.kbsl.server.song.domain.repository.SongRepository;
 import com.kbsl.server.song.dto.response.SongResponseDto;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
@@ -22,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +37,17 @@ import java.util.stream.Collectors;
 public class LeagueServiceImpl implements LeagueService {
 
     private final LeagueRepository leagueRepository;
+    private final SongRepository songRepository;
+    private final ScoreRepository scoreRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 리그를 생성한다.
+     * 단, 유저의 정보가 조회되지않을 경우 예외를 발생시킨다.
+     * @param leagueSaveRequestDto
+     * @return
+     * @throws Exception
+     */
     @Override
     @Transactional
     public LeagueResponseDto createLeague(LeagueSaveRequestDto leagueSaveRequestDto) throws Exception {
@@ -53,6 +67,14 @@ public class LeagueServiceImpl implements LeagueService {
         return LeagueResponseDto.builder().entity(leagueEntity).build();
     }
 
+    /**
+     * 전체 리그를 조회한다. - Pagination
+     * 현재 리그의 상태를 함께 전송한다.
+     * @param page
+     * @param sort
+     * @param elementCnt
+     * @return
+     */
     @Override
     @Transactional
     public Page<LeagueResponseDto> findLeagues(Integer page, String sort, Integer elementCnt) {
@@ -78,6 +100,12 @@ public class LeagueServiceImpl implements LeagueService {
                 .build();
     }
 
+    /**
+     * 리그를 상세하게 조회한다.
+     * 단, 리그가 존재하지않을 경우 예외를 발생시킨다.
+     * @param leagueSeq
+     * @return
+     */
     @Override
     @Transactional
     public LeagueDeatilResponseDto findLeagueDetail(Long leagueSeq) {
@@ -95,5 +123,34 @@ public class LeagueServiceImpl implements LeagueService {
         }
 
         return responseDto;
+    }
+
+    /**
+     * 리그 시퀀스와 노래 시퀀스로 해당 리그안에 노래의 스코어정보를 조회한다.
+     * 단, 리그가 존재하지 않거나 노래가 존재하지않을 경우 예외를 발생시킨다.
+     * @param leagueSeq
+     * @param songSeq
+     * @param page
+     * @param sort
+     * @param elementCnt
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public Page<ScoreResponseDto> findLeagueSongScore(Long leagueSeq, Long songSeq, Integer page, String sort, Integer elementCnt) throws Exception {
+        League leagueEntity = leagueRepository.findBySeq(leagueSeq)
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 리그를 찾을 수 없습니다. leagueSeq =" + leagueSeq));
+
+        Song songEntity = songRepository.findBySeq(songSeq)
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 노래를 찾을 수 없습니다. songSeq =" + songSeq));
+
+        LocalDateTime startDate = leagueEntity.getLeagueStartDtime();
+        LocalDateTime endDate = leagueEntity.getLeagueEndDtime();
+
+        Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+
+        return scoreRepository.findAllScoreBySongSeqAndLeagueDateWithPage(songSeq, startDate, endDate, pageable, sort)
+            .map(test -> ScoreResponseDto.builder().entity(test).build());
     }
 }

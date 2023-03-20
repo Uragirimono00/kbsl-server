@@ -20,7 +20,7 @@ public class UserResponseDto {
     private Long seq;
 
     @Schema(description = "유저 이름")
-    private String username;
+    private String userName;
 
     @Schema(description = "프로필 이미지")
     private String imageUrl;
@@ -34,7 +34,7 @@ public class UserResponseDto {
     @Builder
     public UserResponseDto(User entity) {
         this.seq = entity.getSeq();
-        this.username = entity.getUsername();
+        this.userName = entity.getUsername();
         this.imageUrl = entity.getImageUrl();
         this.eRole = entity.getERole();
         this.beatleaderId = entity.getBeatleaderId();

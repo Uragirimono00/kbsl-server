@@ -40,6 +40,23 @@ public class UserController {
         return ResponseEntity.ok(userService.findDetailUser(userSeq));
     }
 
+    @GetMapping("/myinfo")
+    @Tag(name = "User")
+    @Operation(summary = "유저 조회 API",
+        description =
+            "특정 유저의 aT 를 헤더로 전달받아 해당하는 유저의 정보를 반환한다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "404", description = "조회 실패 - 유저 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserResponseDto> findAtInfo(
+        @RequestParam(value = "Authorization") String Authorization
+    ) throws Exception {
+        return ResponseEntity.ok(userService.findAtInfo(Authorization));
+    }
+
     @PutMapping(value = "/{userSeq}")
     @Tag(name = "User")
     @Operation(summary = "유저 비트리더ID 수정 API",

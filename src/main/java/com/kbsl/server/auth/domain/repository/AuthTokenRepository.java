@@ -16,4 +16,6 @@ public interface AuthTokenRepository extends JpaRepository<AuthToken, String> {
     Boolean existsByUserSeq(Long userSeq);
     Boolean existsByAccessToken(String accessToken);
     Boolean existsByAccessTokenAndSeq(String accessToken, String fakeRefreshToken);
+
+    Optional<AuthToken> findByAccessToken(String authorization);
 }
