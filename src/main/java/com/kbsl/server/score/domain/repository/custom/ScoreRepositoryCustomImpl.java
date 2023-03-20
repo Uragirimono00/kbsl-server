@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,15 +25,41 @@ public class ScoreRepositoryCustomImpl implements ScoreRepositoryCustom {
     @Override
     public Page<Score> findAllScoreBySongSeqWithPage(Long songSeq, Pageable pageable, String sort) {
         List<Score> results = queryFactory.selectFrom(score)
-                .where(score.song.seq.eq(songSeq))
-                .orderBy(score.modifiedScore.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+            .where(score.song.seq.eq(songSeq))
+            .orderBy(score.modifiedScore.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
         Long totalCount = queryFactory.select(score.count())
-                .from(score)
-                .fetchOne();
+            .where(score.song.seq.eq(songSeq))
+            .from(score)
+            .fetchOne();
+
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    @Override
+    public Page<Score> findAllScoreBySongSeqAndLeagueDateWithPage(Long songSeq, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable, String sort) {
+        List<Score> results = queryFactory.selectFrom(score)
+            .where(
+                score.song.seq.eq(songSeq),
+                score.timePost.after(startDate),
+                score.timePost.before(endDate)
+            )
+            .orderBy(score.modifiedScore.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        Long totalCount = queryFactory.select(score.count())
+            .where(
+                score.song.seq.eq(songSeq),
+                score.timePost.after(startDate),
+                score.timePost.before(endDate)
+            )
+            .from(score)
+            .fetchOne();
 
         return new PageImpl<>(results, pageable, totalCount);
     }

@@ -143,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
                 .userSeq(userDetail.getUserSeq())
                 .eRole(userDetail.getERole())
                 .accessToken(accessToken)
-                .username(userDetail.getUsername())
+                .userName(userDetail.getUsername())
                 .refreshToken(refreshToken)
                 .imageUrl(userDetail.getImageUrl())
                 .build();
