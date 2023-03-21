@@ -5,4 +5,5 @@ public interface OAuthUserInfo {
     String getProvider();
     String getUserName();
     String getImageUrl();
+    String getEmail();
 }

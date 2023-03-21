@@ -24,6 +24,7 @@ public class User extends BaseEntity {
     private String password;
 
     private String username;
+    private String nickName;
     private String imageUrl;
     @Enumerated(EnumType.STRING)
     private ERole eRole;
@@ -31,13 +32,14 @@ public class User extends BaseEntity {
     private String steamId;
 
     @Builder
-    public User(Long seq, String password, String username, String imageUrl, ERole eRole, String steamId) {
+    public User(Long seq, String password, String username, String imageUrl, ERole eRole, String steamId, String nickName) {
         this.seq = seq;
         this.password = password;
         this.username = username;
         this.imageUrl = imageUrl;
         this.eRole = eRole;
         this.steamId = steamId;
+        this.nickName = steamId;
     }
 
     /**

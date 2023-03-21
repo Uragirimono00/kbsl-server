@@ -45,6 +45,7 @@ spring:
             clientSecret: XB8S2F5XaV_G9tv-nwxWUGcTYh8SlW2Z
             scope:
               - identify
+              - email
             redirectUri: "https://www.kbsl.dev/user/auth"
             authorizationGrantType: authorization_code
             clientName: discord

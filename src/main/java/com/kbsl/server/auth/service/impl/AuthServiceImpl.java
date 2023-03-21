@@ -111,6 +111,11 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);;
 
+        if (authentication == null){
+            log.info("잘못된 로그인 정보입니다.");
+            return null;
+        }
+
         PrincipalUserDetail userDetail = (PrincipalUserDetail) authentication.getPrincipal();
         Set<String> authorities = userDetail.getAuthorities()
                 .stream().map(role -> role.getAuthority())
@@ -211,21 +216,28 @@ public class AuthServiceImpl implements AuthService {
         String provide = oAuthUserInfo.getProvider();
         String providerId = oAuthUserInfo.getProviderId();
         String username = oAuthUserInfo.getUserName();
+        String email = oAuthUserInfo.getEmail();
         String imageUrl = oAuthUserInfo.getImageUrl();
         String password = provide + providerId;
 
-        User user = userRepository.findByUsername(username).orElse(null);
+        if (email.equals("null")){
+            log.info("잘못된 회원입니다.");
+            return null;
+        }
+
+        User user = userRepository.findByUsername(email).orElse(null);
 
         if(user == null) {
             userRepository.save(User.builder()
                     .password(passwordEncoder.encode(password))
-                    .username(username)
+                    .username(email)
+                    .nickName(username)
                     .eRole(ERole.ROLE_USER)
                     .imageUrl(imageUrl)
                     .build()
             );
         }
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

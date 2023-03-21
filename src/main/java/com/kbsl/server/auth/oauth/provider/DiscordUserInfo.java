@@ -36,5 +36,10 @@ public class DiscordUserInfo implements OAuthUserInfo {
             return "https://cdn.discordapp.com/avatars/" + String.valueOf(attributes.get("id")) + "/" + String.valueOf(attributes.get("avatar")) + ".gif";
         }
     }
+
+    @Override
+    public String getEmail() {
+        return String.valueOf(attributes.get("email"));
+    }
 }
 
