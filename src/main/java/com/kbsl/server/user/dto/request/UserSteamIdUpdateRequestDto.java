@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
-public class UserUpdateRequestDto {
-    @Schema(description = "닉네임")
-    private String nickName;
+public class UserSteamIdUpdateRequestDto {
+    @Schema(description = "Steam Id")
+    private String steamId;
 }

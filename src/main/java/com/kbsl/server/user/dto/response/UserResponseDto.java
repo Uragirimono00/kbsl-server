@@ -34,7 +34,7 @@ public class UserResponseDto {
     @Builder
     public UserResponseDto(User entity) {
         this.seq = entity.getSeq();
-        this.userName = entity.getUsername();
+        this.userName = entity.getNickName();
         this.imageUrl = entity.getImageUrl();
         this.eRole = entity.getERole();
         this.steamId = entity.getSteamId();

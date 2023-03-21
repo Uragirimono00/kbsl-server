@@ -3,12 +3,12 @@ package com.kbsl.server.user.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kbsl.server.auth.enums.ERole;
 import com.kbsl.server.boot.domain.model.BaseEntity;
+import com.kbsl.server.user.dto.request.UserSteamIdUpdateRequestDto;
 import com.kbsl.server.user.dto.request.UserUpdateRequestDto;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 
 
 @Entity
@@ -44,13 +44,16 @@ public class User extends BaseEntity {
 
     /**
      * 엔티티를 업데이트한다.
-     * @param userUpdateRequestDto
+     * @param userSteamIdUpdateRequestDto
      */
-    public void update(UserUpdateRequestDto userUpdateRequestDto) {
-        if (userUpdateRequestDto.getSteamId() != null)
-            this.steamId = userUpdateRequestDto.getSteamId();
+    public void steamIdUpdate(UserSteamIdUpdateRequestDto userSteamIdUpdateRequestDto) {
+        if (userSteamIdUpdateRequestDto.getSteamId() != null)
+            this.steamId = userSteamIdUpdateRequestDto.getSteamId();
     }
-
+    public void update(UserUpdateRequestDto userUpdateRequestDto) {
+        if (userUpdateRequestDto.getNickName() != null)
+            this.nickName = userUpdateRequestDto.getNickName();
+    }
 
 
 }

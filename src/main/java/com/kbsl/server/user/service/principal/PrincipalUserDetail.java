@@ -19,6 +19,7 @@ public class PrincipalUserDetail implements UserDetails {
     private Long userSeq;
     private String password;
     private String username;
+    private String nickName;
     private ERole eRole;
     private String imageUrl;
 
@@ -60,10 +61,11 @@ public class PrincipalUserDetail implements UserDetails {
     }
 
     @Builder
-    public PrincipalUserDetail(Long userSeq, String password, String username, ERole eRole, String imageUrl) {
+    public PrincipalUserDetail(Long userSeq, String password, String username, String nickName, ERole eRole, String imageUrl) {
         this.userSeq = userSeq;
         this.password = password;
         this.username = username;
+        this.nickName = nickName;
         this.eRole = eRole;
         this.imageUrl = imageUrl;
     }
