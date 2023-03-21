@@ -7,5 +7,4 @@
          \|__|\|__|\___/ /        \|_______|\|__| \|__|\|_______|              |\_________\|_______|\|_______|
                   \|___|/                                                      \|_________|
 
-
 ${AnsiColor.BRIGHT_RED}[based on Spring Boot version ${spring-boot.version}]
