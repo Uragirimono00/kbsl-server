@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AccessTokenRefreshResponseDto accessTokenRefresh(AccessTokenRefreshTokenDto requestDto) {
         requestDto.setAccessToken( jwtUtils.getAccessTokenFromBearer(
-                requestDto.getAccessToken()
+            requestDto.getAccessToken()
         ));
 
         String username = jwtUtils.getUserNameFromAccessToken(requestDto.getAccessToken());
@@ -83,14 +83,14 @@ public class AuthServiceImpl implements AuthService {
         String newAccessToken = jwtUtils.generateAccessToken(authenticationToken);
 
         AuthToken authTokenEntity = authTokenRepository.findBySeq(requestDto.getRefreshToken()).orElseThrow(
-                () -> new RestException(HttpStatus.BAD_REQUEST, "해당 Refresh Token을 찾을 수 없습니다.")
+            () -> new RestException(HttpStatus.BAD_REQUEST, "해당 Refresh Token을 찾을 수 없습니다.")
         );
 
         authTokenEntity.updateAccessToken(newAccessToken);
 
         return AccessTokenRefreshResponseDto.builder()
-                .accessToken(newAccessToken)
-                .build();
+            .accessToken(newAccessToken)
+            .build();
     }
 
     /**
@@ -111,15 +111,10 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);;
 
-        if (authentication == null){
-            log.info("잘못된 로그인 정보입니다.");
-            return null;
-        }
-
         PrincipalUserDetail userDetail = (PrincipalUserDetail) authentication.getPrincipal();
         Set<String> authorities = userDetail.getAuthorities()
-                .stream().map(role -> role.getAuthority())
-                .collect(Collectors.toSet());
+            .stream().map(role -> role.getAuthority())
+            .collect(Collectors.toSet());
 
         String accessToken = jwtUtils.generateAccessToken(authentication);
         String refreshToken = jwtUtils.generateRefreshToken(authentication);
@@ -127,11 +122,11 @@ public class AuthServiceImpl implements AuthService {
         String fakeRefreshToken = passwordEncoder.encode(refreshToken);
 
         AuthToken authTokenEntity = AuthToken.builder()
-                .seq(fakeRefreshToken)
-                .userSeq(userDetail.getUserSeq())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+            .seq(fakeRefreshToken)
+            .userSeq(userDetail.getUserSeq())
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
 
         if(!authorities.contains("ROLE_ADMIN")) {
             Boolean isLogin = authTokenRepository.existsByUserSeq(userDetail.getUserSeq());
@@ -145,13 +140,13 @@ public class AuthServiceImpl implements AuthService {
 
         authTokenRepository.save(authTokenEntity);
         AuthLoginResponse authLoginResponse = AuthLoginResponse.builder()
-                .userSeq(userDetail.getUserSeq())
-                .eRole(userDetail.getERole())
-                .accessToken(accessToken)
-                .userName(userDetail.getNickName())
-                .refreshToken(refreshToken)
-                .imageUrl(userDetail.getImageUrl())
-                .build();
+            .userSeq(userDetail.getUserSeq())
+            .eRole(userDetail.getERole())
+            .accessToken(accessToken)
+            .userName(userDetail.getUsername())
+            .refreshToken(refreshToken)
+            .imageUrl(userDetail.getImageUrl())
+            .build();
 
         return authLoginResponse;
     }
@@ -213,6 +208,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         log.info("oauth.getUsername {}", oAuthUserInfo.getUserName());
+        log.info("oauth.getEmail {}", oAuthUserInfo.getEmail());
+
         String provide = oAuthUserInfo.getProvider();
         String providerId = oAuthUserInfo.getProviderId();
         String username = oAuthUserInfo.getUserName();
@@ -220,21 +217,16 @@ public class AuthServiceImpl implements AuthService {
         String imageUrl = oAuthUserInfo.getImageUrl();
         String password = provide + providerId;
 
-        if (email.equals("null")){
-            log.info("잘못된 회원입니다.");
-            return null;
-        }
-
-        User user = userRepository.findByUsername(email).orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
 
         if(user == null) {
             userRepository.save(User.builder()
-                    .password(passwordEncoder.encode(password))
-                    .username(email)
-                    .nickName(username)
-                    .eRole(ERole.ROLE_USER)
-                    .imageUrl(imageUrl)
-                    .build()
+                .password(passwordEncoder.encode(password))
+                .username(email)
+                .nickName(username)
+                .eRole(ERole.ROLE_USER)
+                .imageUrl(imageUrl)
+                .build()
             );
         }
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(email, password);
@@ -254,9 +246,9 @@ public class AuthServiceImpl implements AuthService {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(provider.getProviderDetails().getUserInfoEndpoint().getUri())
-                .addHeader("Authorization", "Bearer " + oauthTokenResponse.getAccess_token())
-                .build();
+            .url(provider.getProviderDetails().getUserInfoEndpoint().getUri())
+            .addHeader("Authorization", "Bearer " + oauthTokenResponse.getAccess_token())
+            .build();
 
         try(Response response = client.newCall(request).execute()) {
             String responseResult = response.body().string();
@@ -282,13 +274,13 @@ public class AuthServiceImpl implements AuthService {
         OkHttpClient client = new OkHttpClient();
         Map<String, Object> requestMap = tokenRequest(code, provider);
         String requestParam = "grant_type=authorization_code&client_id="+requestMap.get("client_id")+"&redirect_uri="+
-                requestMap.get("redirect_uri")+"&client_secret="+requestMap.get("client_secret")+"&code="+code;
+            requestMap.get("redirect_uri")+"&client_secret="+requestMap.get("client_secret")+"&code="+code;
         RequestBody requestBody = RequestBody.create(requestParam, MediaType.parse("application/x-www-form-urlencoded;charset=utf-8"));
 
         Request request = new Request.Builder()
-                .url(provider.getProviderDetails().getTokenUri())
-                .post(requestBody)
-                .build();
+            .url(provider.getProviderDetails().getTokenUri())
+            .post(requestBody)
+            .build();
 
         try(Response response = client.newCall(request).execute()) {
             String responseResult = response.body().string();

@@ -40,7 +40,9 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<AuthLoginResponse> signInDiscord(@RequestParam String code, HttpServletRequest request) {
+    public ResponseEntity<AuthLoginResponse> signInDiscord(
+        @RequestParam String code,
+        HttpServletRequest request) {
         return new ResponseEntity<>(authService.authLogin(code, request.getServletPath()), HttpStatus.OK);
     }
 
@@ -55,7 +57,8 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "리프레쉬 실패")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AccessTokenRefreshResponseDto> accessTokenRefresh(@RequestBody AccessTokenRefreshTokenDto requestDto) {
+    public ResponseEntity<AccessTokenRefreshResponseDto> accessTokenRefresh(
+        @RequestBody AccessTokenRefreshTokenDto requestDto) {
         return new ResponseEntity<>(authService.accessTokenRefresh(requestDto), HttpStatus.OK);
     }
 
@@ -69,7 +72,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
             @ApiResponse(responseCode = "401", description = "로그아웃 실패")
     })
-    public ResponseEntity<Boolean> logOut(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String accessToken) {
+    public ResponseEntity<Boolean> logOut(
+        @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String accessToken) {
         return new ResponseEntity<>(authService.logOut(accessToken), HttpStatus.OK);
     }
 }
