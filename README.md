@@ -6,6 +6,7 @@
 - Swagger 3.0
 - JPA (ORM)
 - OAuth2.0 (Login) :: Discord
+- OpenID :: Steam
 - JUnit (Test)
 - QueryDSL
 
