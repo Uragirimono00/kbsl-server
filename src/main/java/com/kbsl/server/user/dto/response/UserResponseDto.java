@@ -9,6 +9,7 @@ import lombok.*;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.metamodel.Metamodel;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter

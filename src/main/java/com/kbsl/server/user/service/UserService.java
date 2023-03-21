@@ -3,6 +3,7 @@ package com.kbsl.server.user.service;
 import com.kbsl.server.user.dto.request.UserSteamIdUpdateRequestDto;
 import com.kbsl.server.user.dto.request.UserUpdateRequestDto;
 import com.kbsl.server.user.dto.response.UserResponseDto;
+import com.kbsl.server.user.enums.UserPermissionType;
 
 public interface UserService {
     UserResponseDto findDetailUser(Long userSeq) throws Exception;
@@ -14,4 +15,6 @@ public interface UserService {
     UserResponseDto updateSteamId(Long userSeq, UserSteamIdUpdateRequestDto userSteamIdUpdateRequestDto) throws Exception;
 
     UserResponseDto updateUser(Long userSeq, UserUpdateRequestDto userUpdateRequestDto) throws Exception;
+
+    UserResponseDto updatePermissionUser(Long userSeq, UserPermissionType userPermissionType);
 }

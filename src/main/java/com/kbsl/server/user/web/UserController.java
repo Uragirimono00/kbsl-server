@@ -3,6 +3,7 @@ package com.kbsl.server.user.web;
 import com.kbsl.server.user.dto.request.UserSteamIdUpdateRequestDto;
 import com.kbsl.server.user.dto.request.UserUpdateRequestDto;
 import com.kbsl.server.user.dto.response.UserResponseDto;
+import com.kbsl.server.user.enums.UserPermissionType;
 import com.kbsl.server.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -116,6 +117,26 @@ public class UserController {
         @RequestBody UserUpdateRequestDto userUpdateRequestDto
     ) throws Exception {
         return ResponseEntity.ok(userService.updateUser(userSeq, userUpdateRequestDto));
+    }
+
+    @PutMapping(value = "/adm/{userSeq}")
+    @Tag(name = "User")
+    @Operation(summary = "유저 퍼미션 정보 수정 API",
+            description =
+                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저의 권한을 수정한다. \n" +
+                            "이때, 요청자는 관리자 권한을 가지고 있어야 한다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "유저 수정 성공"),
+            @ApiResponse(responseCode = "403", description = "수정 실패 - 요청자와 작성자 미일치"),
+            @ApiResponse(responseCode = "404", description = "수정 실패 - 유저 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserResponseDto> updatePermissionUser(
+            @PathVariable("userSeq") Long userSeq,
+            @RequestParam UserPermissionType userPermissionType
+    ) throws Exception {
+        return ResponseEntity.ok(userService.updatePermissionUser(userSeq, userPermissionType));
     }
 
 }

@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -30,6 +31,9 @@ public class User extends BaseEntity {
     private ERole eRole;
 
     private String steamId;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserPermissionList> userPermissionList;
 
     @Builder
     public User(Long seq, String password, String username, String imageUrl, ERole eRole, String steamId, String nickName) {
