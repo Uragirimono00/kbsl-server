@@ -39,7 +39,7 @@ public class User extends BaseEntity {
         this.imageUrl = imageUrl;
         this.eRole = eRole;
         this.steamId = steamId;
-        this.nickName = steamId;
+        this.nickName = nickName;
     }
 
     /**
