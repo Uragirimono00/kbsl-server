@@ -61,8 +61,7 @@ public class SongServiceImpl implements SongService {
         for (SongSaveRequestDto eachSong : songSaveRequestDto) {
             log.info(eachSong.toString());
 
-            Song alreadySongEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(
-                    eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
+            Song alreadySongEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
             Song songEntity = alreadySongEntity != null ? alreadySongEntity : Song.builder()
                     .songId(eachSong.getSongId())

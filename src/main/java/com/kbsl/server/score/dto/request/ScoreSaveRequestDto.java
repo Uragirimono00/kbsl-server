@@ -3,6 +3,7 @@ package com.kbsl.server.score.dto.request;
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.song.domain.model.Song;
+import com.kbsl.server.song.dto.request.SongSaveRequestDto;
 import com.kbsl.server.song.dto.response.SongResponseDto;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.dto.response.UserResponseDto;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 public class ScoreSaveRequestDto {
 
     @Schema(description = "비트리더 스코어 시퀀스")
-    private Long steamId;
+    private String steamId;
 
     @JsonIgnore
     @Schema(description = "비트리더 스코어 시퀀스")
@@ -64,6 +65,9 @@ public class ScoreSaveRequestDto {
 
     @Schema(description = "기록된 시간 유닉스 타임")
     private LocalDateTime timePost;
+
+    @Schema(description = "기록된 시간 유닉스 타임")
+    private SongSaveRequestDto songSaveRequestDto;
 
     public Score toEntity(User userEntity, Song songEntity) {
         return Score.builder()
