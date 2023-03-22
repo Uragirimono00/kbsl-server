@@ -217,7 +217,7 @@ public class AuthServiceImpl implements AuthService {
         String imageUrl = oAuthUserInfo.getImageUrl();
         String password = provide + providerId;
 
-        User user = userRepository.findByUsername(username).orElse(null);
+        User user = userRepository.findByUsername(email).orElse(null);
 
         if(user == null) {
             userRepository.save(User.builder()
