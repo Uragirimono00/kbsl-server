@@ -56,11 +56,11 @@ public class SecurityConfig {
             .authorizeHttpRequests((authz) -> authz
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/**/auth/**").permitAll()
                 .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                 .antMatchers("/**/league/**").permitAll()
                 .antMatchers("/**/score/**").permitAll()
                 .antMatchers("/**/user/**").permitAll()
-                .antMatchers("/**/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(authJwtFilter, UsernamePasswordAuthenticationFilter.class)

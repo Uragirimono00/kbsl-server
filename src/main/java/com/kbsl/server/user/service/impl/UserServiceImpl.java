@@ -140,8 +140,10 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateSteamId(Long userSeq, UserSteamIdUpdateRequestDto userSteamIdUpdateRequestDto) throws Exception {
         User userEntity = userRepository.findBySeq(userSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
-        if (userRepository.existsBySteamId(userSteamIdUpdateRequestDto.getSteamId()))
+
+        if (userRepository.existsBySteamId(userSteamIdUpdateRequestDto.getSteamId())) {
             throw new RestException(HttpStatus.BAD_REQUEST, "이미 존재하는 유저입니다. https://www.beatleader.xyz/u/" + userSteamIdUpdateRequestDto.getSteamId());
+        }
 
         /**
          * 작성자와 요청자의 시퀀스가 일치하는지 확인한다. 그렇지 않을 경우, 예외를 발생시킨다.
