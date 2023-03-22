@@ -72,7 +72,7 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.updateSongScore(songSeq, page, sort, elementCnt));
     }
 
-    @PostMapping(value = "/score/{steamId}")
+    @PostMapping(value = "/{steamId}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 제출 API",
             description =

@@ -56,10 +56,10 @@ public class SecurityConfig {
             .authorizeHttpRequests((authz) -> authz
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                 .antMatchers("/**/league/**").permitAll()
                 .antMatchers("/**/score/**").permitAll()
                 .antMatchers("/**/user/**").permitAll()
-                .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                 .antMatchers("/**/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

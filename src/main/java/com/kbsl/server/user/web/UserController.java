@@ -2,6 +2,7 @@ package com.kbsl.server.user.web;
 
 import com.kbsl.server.user.dto.request.UserSteamIdUpdateRequestDto;
 import com.kbsl.server.user.dto.request.UserUpdateRequestDto;
+import com.kbsl.server.user.dto.response.UserDetailResponseDto;
 import com.kbsl.server.user.dto.response.UserResponseDto;
 import com.kbsl.server.user.enums.UserPermissionType;
 import com.kbsl.server.user.service.UserService;
@@ -34,7 +35,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "조회 실패 - 유저 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> findUser(
+    public ResponseEntity<UserDetailResponseDto> findUser(
             @PathVariable(value = "userSeq") Long userSeq
     ) throws Exception {
         return ResponseEntity.ok(userService.findDetailUser(userSeq));
@@ -119,11 +120,11 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userSeq, userUpdateRequestDto));
     }
 
-    @PutMapping(value = "/adm/{userSeq}")
+    @PostMapping(value = "/adm/{userSeq}")
     @Tag(name = "User")
-    @Operation(summary = "유저 퍼미션 정보 수정 API",
+    @Operation(summary = "유저 퍼미션 정보 추가 API",
             description =
-                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저의 권한을 수정한다. \n" +
+                    "유저 시퀀스를 Path Variable 로 전달받아 해당 유저의 권한을 추가한다. \n" +
                             "이때, 요청자는 관리자 권한을 가지고 있어야 한다."
     )
     @ApiResponses({
@@ -132,11 +133,31 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "수정 실패 - 유저 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> updatePermissionUser(
+    public ResponseEntity<UserDetailResponseDto> createPermissionUser(
             @PathVariable("userSeq") Long userSeq,
             @RequestParam UserPermissionType userPermissionType
     ) throws Exception {
-        return ResponseEntity.ok(userService.updatePermissionUser(userSeq, userPermissionType));
+        return ResponseEntity.ok(userService.createPermissionUser(userSeq, userPermissionType));
+    }
+
+    @DeleteMapping(value = "/adm/{userSeq}")
+    @Tag(name = "User")
+    @Operation(summary = "유저 퍼미션 정보 삭제 API",
+        description =
+            "유저 시퀀스를 Path Variable 로 전달받아 해당 유저의 권한을 삭제한다. \n" +
+                "이때, 요청자는 관리자 권한을 가지고 있어야 한다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "유저 수정 성공"),
+        @ApiResponse(responseCode = "403", description = "수정 실패 - 요청자와 작성자 미일치"),
+        @ApiResponse(responseCode = "404", description = "수정 실패 - 유저 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserDetailResponseDto> deletePermissionUser(
+        @PathVariable("userSeq") Long userSeq,
+        @RequestParam UserPermissionType userPermissionType
+    ) throws Exception {
+        return ResponseEntity.ok(userService.deletePermissionUser(userSeq, userPermissionType));
     }
 
 }

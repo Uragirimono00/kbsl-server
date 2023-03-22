@@ -1,5 +1,6 @@
 package com.kbsl.server.user.domain.model;
 
+import com.kbsl.server.boot.domain.model.BaseEntity;
 import com.kbsl.server.user.enums.UserPermissionType;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-public class UserPermission {
+public class UserPermission extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -25,6 +26,6 @@ public class UserPermission {
     @Enumerated(EnumType.STRING)
     private UserPermissionType userPermissionType;
 
-    @OneToMany(mappedBy = "userPermission")
+    @OneToMany(mappedBy = "permission")
     private List<UserPermissionList> userPermissionList;
 }
