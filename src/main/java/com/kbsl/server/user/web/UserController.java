@@ -58,6 +58,23 @@ public class UserController {
         return ResponseEntity.ok(userService.findAtInfo(Authorization));
     }
 
+    @GetMapping("/steam")
+    @Tag(name = "User")
+    @Operation(summary = "유저 조회 API - SteamId",
+            description =
+                    "특정 유저의 SteamId를 전달받아 해당하는 유저의 정보를 반환한다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "조회 실패 - 유저 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UserResponseDto> findUserWithSteam(
+            @RequestParam(value = "steamId") String steamId
+    ) throws Exception {
+        return ResponseEntity.ok(userService.findUserWithSteam(steamId));
+    }
+
     @PutMapping(value = "/beatleader/{userSeq}")
     @Tag(name = "User")
     @Operation(summary = "유저 Steam ID 수정 API - beatleader",

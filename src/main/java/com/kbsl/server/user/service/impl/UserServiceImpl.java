@@ -254,6 +254,21 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * SteamId로 특정 유저를 조회한다.
+     * @param steamId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public UserDetailResponseDto findUserWithSteam(String steamId) throws Exception {
+        User userEntity = userRepository.findBySteamId(steamId)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
+
+        return UserDetailResponseDto.builder().entity(userEntity).build();
+    }
+
+    /**
      * 현재의 AT토큰으로 유저를 조회한다.
      * @param authorization
      * @return
