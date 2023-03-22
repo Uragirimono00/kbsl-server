@@ -69,7 +69,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "조회 실패 - 유저 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserResponseDto> findUserWithSteam(
+    public ResponseEntity<UserDetailResponseDto> findUserWithSteam(
             @RequestParam(value = "steamId") String steamId
     ) throws Exception {
         return ResponseEntity.ok(userService.findUserWithSteam(steamId));
