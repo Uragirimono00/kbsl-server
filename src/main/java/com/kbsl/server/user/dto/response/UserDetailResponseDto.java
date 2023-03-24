@@ -25,7 +25,7 @@ public class UserDetailResponseDto {
     @Schema(description = "유저 권한")
     private ERole eRole;
 
-    @Schema(description = "비트리더 ID")
+    @Schema(description = "Steam ID")
     private String steamId;
 
     @Schema(description = "유저 권한")

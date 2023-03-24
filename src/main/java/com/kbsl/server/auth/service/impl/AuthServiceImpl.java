@@ -111,6 +111,11 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);;
 
+        if(authentication == null){
+            log.error("허용 되지 않은 로그인입니다.");
+            return null;
+        }
+
         PrincipalUserDetail userDetail = (PrincipalUserDetail) authentication.getPrincipal();
         Set<String> authorities = userDetail.getAuthorities()
             .stream().map(role -> role.getAuthority())
@@ -205,6 +210,11 @@ public class AuthServiceImpl implements AuthService {
             oAuthUserInfo = new DiscordUserInfo(oauthUserAttributes);
         } else {
             log.error("허용되지 않는 접근입니다.");
+        }
+
+        if (oAuthUserInfo.getEmail().equals("null")){
+            log.error("허용 되지 않은 로그인입니다.");
+            return null;
         }
 
         log.info("oauth.getUsername {}", oAuthUserInfo.getUserName());

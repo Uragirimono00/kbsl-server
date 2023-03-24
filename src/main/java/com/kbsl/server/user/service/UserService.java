@@ -20,4 +20,6 @@ public interface UserService {
     UserDetailResponseDto createPermissionUser(Long userSeq, UserPermissionType userPermissionType) throws Exception;
 
     UserDetailResponseDto deletePermissionUser(Long userSeq, UserPermissionType userPermissionType) throws Exception;
+
+    UserDetailResponseDto findUserWithSteam(String steamId) throws Exception;
 }
