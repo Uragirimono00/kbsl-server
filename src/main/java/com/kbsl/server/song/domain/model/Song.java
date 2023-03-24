@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -46,5 +47,7 @@ public class Song extends BaseEntity {
     private String previewUrl;
 
     private String downloadUrl;
+
+    private LocalDateTime publishedDtime;
 
 }

@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @ToString
 @NoArgsConstructor
@@ -40,6 +42,9 @@ public class SongApiResponseDto {
     @Schema(description = "다운로드 경로")
     private String downloadUrl;
 
+    @Schema(description = "퍼블리쉬 시간")
+    private LocalDateTime publishedDtime;
+
     @Builder
     public SongApiResponseDto(Song entity) {
         this.songId = entity.getSongId();
@@ -51,5 +56,6 @@ public class SongApiResponseDto {
         this.coverUrl = entity.getCoverUrl();
         this.previewUrl = entity.getPreviewUrl();
         this.downloadUrl = entity.getDownloadUrl();
+        this.publishedDtime = entity.getPublishedDtime();
     }
 }

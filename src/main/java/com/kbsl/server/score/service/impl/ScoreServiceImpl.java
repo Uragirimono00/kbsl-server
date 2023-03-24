@@ -11,8 +11,12 @@ import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.domain.repository.SongRepository;
+import com.kbsl.server.song.dto.response.SongApiResponseDto;
+import com.kbsl.server.song.enums.SongDifficultyType;
+import com.kbsl.server.song.enums.SongModeType;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
+import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.JSONValue;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
@@ -31,6 +35,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -142,8 +147,96 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Transactional
-    public ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto scoreSaveRequestDto) throws Exception {
-        return null;
+    public ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto requestDto) throws Exception {
+
+        User userEntity = userRepository.findBySteamId(requestDto.getSteamId())
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. steamId = " + requestDto.getSteamId()));
+
+        Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
+        if (songEntity == null){
+            List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
+
+            URI uri = UriComponentsBuilder
+                .fromUriString("https://api.beatsaver.com")
+                .pathSegment("maps", "hash", requestDto.getSongHash())
+                .encode()
+                .build()
+                .toUri();
+
+            log.info("Request URI: " + uri);
+
+            RestTemplate restTemplate = new RestTemplate();
+            String response = restTemplate.getForObject(uri, String.class);
+
+            /**
+             * BeatLeader 데이터가 존재하지 않을경우 패스한다.
+             */
+            JSONObject responseJson = (JSONObject) JSONValue.parse(response);
+            if (responseJson == null) {
+                throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatLeader API: " + response);
+            }
+//        log.info(response);
+
+            JSONObject responseUploaderJson = (JSONObject) JSONValue.parse(responseJson.get("uploader").toString());
+            JSONArray responseVersionsJson = (JSONArray) JSONValue.parse(responseJson.get("versions").toString());
+
+
+            // 플레이 한 노래 저장
+            for (Object responseVersionObject : responseVersionsJson){
+                JSONObject responseVersionsJsonObject = (JSONObject) JSONValue.parse(responseVersionObject.toString());
+                JSONArray responseDiffsJson = (JSONArray) JSONValue.parse(responseVersionsJsonObject.get("diffs").toString());
+
+                for (Object responseDiffObject : responseDiffsJson) {
+                    JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
+
+                    songEntity = Song.builder()
+                        .songId(responseJson.get("id").toString())
+                        .songHash(responseVersionsJsonObject.get("hash").toString())
+                        .songName(responseJson.get("name").toString())
+                        .songDifficulty(SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString()))
+                        .songModeType(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()))
+                        .uploaderName(responseUploaderJson.get("name").toString())
+                        .coverUrl(responseVersionsJsonObject.get("coverURL").toString())
+                        .previewUrl(responseVersionsJsonObject.get("previewURL").toString())
+                        .downloadUrl(responseVersionsJsonObject.get("downloadURL").toString())
+                        .build();
+
+                    songRepository.save(songEntity);
+
+                    songApiResponseDtoArrayList.add(SongApiResponseDto.builder().entity(songEntity).build());
+                }
+            }
+        }
+        // 노래 재 조회
+        songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
+        if (songEntity == null) {
+            // todo: 스코어 기록이 실패할 경우 log에 해당기록을 남겨 스코어를 잃어버리지 않도록 예외를 처리한다.
+            throw new RestException(HttpStatus.NOT_FOUND, "노래를 찾을 수 없습니다... 재시도 해주십시오...");
+        }
+
+        // 점수를 저장한다.
+        Score score = Score.builder()
+            .user(userEntity)
+            .song(songEntity)
+            .scoreSeq(0L)
+            .baseScore(requestDto.getBaseScore())
+            .modifiedScore(requestDto.getModifiedScore())
+            .accuracy(requestDto.getAccuracy())
+            .badCut(requestDto.getBadCut())
+            .missedNote(requestDto.getMissedNote())
+            .bombCut(requestDto.getBombCut())
+            .wallsHit(requestDto.getWallsHit())
+            .pause(requestDto.getPause())
+            .playCount(requestDto.getPlayCount())
+            .accLeft(requestDto.getAccLeft())
+            .accRight(requestDto.getAccRight())
+            .comment("")
+            .timePost(requestDto.getTimePost())
+            .build();
+
+        scoreRepository.save(score);
+
+        return ScoreResponseDto.builder().entity(score).build();
     }
 
 }

@@ -44,17 +44,21 @@ public class SongSaveRequestDto {
     @Schema(description = "다운로드 경로")
     private String downloadUrl;
 
+    @Schema(description = "퍼블리쉬 시간")
+    private LocalDateTime publishedDtime;
+
     public Song toEntity() {
         return Song.builder()
-                .songId(songId)
-                .songName(songName)
-                .songHash(songHash)
-                .songDifficulty(songDifficulty)
-                .songModeType(songModeType)
-                .uploaderName(uploaderName)
-                .coverUrl(coverUrl)
-                .previewUrl(previewUrl)
-                .downloadUrl(downloadUrl)
-                .build();
+            .songId(songId)
+            .songName(songName)
+            .songHash(songHash)
+            .songDifficulty(songDifficulty)
+            .songModeType(songModeType)
+            .uploaderName(uploaderName)
+            .coverUrl(coverUrl)
+            .previewUrl(previewUrl)
+            .downloadUrl(downloadUrl)
+            .publishedDtime(publishedDtime)
+            .build();
     }
 }

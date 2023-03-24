@@ -12,4 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findBySeq(Long userSeq);
     Boolean existsBySteamId(String steamId);
     List<User> findBySteamIdIsNotNull();
+
+    Optional<User> findBySteamId(String steamId);
 }

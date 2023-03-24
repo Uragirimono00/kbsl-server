@@ -4,6 +4,8 @@ import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.dto.response.SongResponseDto;
+import com.kbsl.server.song.enums.SongDifficultyType;
+import com.kbsl.server.song.enums.SongModeType;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.dto.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +22,7 @@ import java.time.LocalDateTime;
 public class ScoreSaveRequestDto {
 
     @Schema(description = "비트리더 스코어 시퀀스")
-    private Long steamId;
+    private String steamId;
 
     @JsonIgnore
     @Schema(description = "비트리더 스코어 시퀀스")
@@ -59,11 +61,19 @@ public class ScoreSaveRequestDto {
     @Schema(description = "오른손 평균 점수")
     private Double accRight;
 
-    @Schema(description = "코멘트")
-    private String comment;
-
     @Schema(description = "기록된 시간 유닉스 타임")
     private LocalDateTime timePost;
+
+    @Schema(description = "노래 ID")
+    private String songId;
+
+    @Schema(description = "노래 해쉬")
+    private String songHash;
+    @Schema(description = "노래 난이도", example = "ExpertPlus")
+    private SongDifficultyType songDifficulty;
+
+    @Schema(description = "노래 모드", example = "Standard")
+    private SongModeType songModeType;
 
     public Score toEntity(User userEntity, Song songEntity) {
         return Score.builder()
@@ -81,7 +91,6 @@ public class ScoreSaveRequestDto {
                 .playCount(playCount)
                 .accLeft(accLeft)
                 .accRight(accRight)
-                .comment(comment)
                 .timePost(timePost)
                 .build();
     }
