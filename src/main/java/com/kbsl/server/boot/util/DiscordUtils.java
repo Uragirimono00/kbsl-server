@@ -1,34 +1,39 @@
 package com.kbsl.server.boot.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 @Slf4j
 public class DiscordUtils {
 
     @Value("${webhook.discord.league}")
-    private static String LeagueChannelUrl;
+    private String leagueChannelUrl;
 
-    public static void LeagueCreateMessage(String content){
-        String discordWebhookUrl = LeagueChannelUrl;
-        RestTemplate restTemplate = new RestTemplate();
+    public void LeagueCreateMessage(String content){
+        try{
+            String discordWebhookUrl = leagueChannelUrl;
+            RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, String> message = new HashMap<>();
-        message.put("content", content);
+            Map<String, String> message = new HashMap<>();
+            message.put("content", content);
 
-        log.info(discordWebhookUrl, content);
-
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(message, headers);
-        restTemplate.postForObject(discordWebhookUrl, request, String.class);
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(message, headers);
+            restTemplate.postForObject(discordWebhookUrl, request, String.class);
+        }catch (Exception e){
+            log.info(e.toString());
+        }
     }
 }

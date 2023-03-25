@@ -39,7 +39,6 @@ import java.util.Map;
 
 import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByHashFromBeatSaverAPI;
 import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByIdFromBeatSaverAPI;
-import static com.kbsl.server.boot.util.DiscordUtils.LeagueCreateMessage;
 
 @Slf4j
 @Service
