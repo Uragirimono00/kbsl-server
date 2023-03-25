@@ -110,12 +110,12 @@ public class UserServiceImpl implements UserService {
         }
 
         /**
-         * 이미 등록된 점수의 경우 패스한다.
+         * 한국 국적이 아닐경우 예외를 발생시킨다.
          */
-        String country = responseJson.get("country").toString();
-        if (!country.equals("KR")) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "국적이 한국이 아닙니다. https://www.beatleader.xyz/u/" + userSteamIdUpdateRequestDto.getSteamId());
-        }
+//        String country = responseJson.get("country").toString();
+//        if (!country.equals("KR")) {
+//            throw new RestException(HttpStatus.BAD_REQUEST, "국적이 한국이 아닙니다. https://www.beatleader.xyz/u/" + userSteamIdUpdateRequestDto.getSteamId());
+//        }
 
         /**
          * 수정 후 리스폰스 엔티티에 담아 리턴

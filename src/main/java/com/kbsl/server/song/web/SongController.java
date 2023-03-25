@@ -65,8 +65,8 @@ public class SongController {
     @Tag(name = "Song")
     @Operation(summary = "[App] 노래 조회 API - BeatSaverAPI",
         description =
-            "Song Id를 Path Variable 로 전달받아 해당 노래를 조회한다." +
-                "만약 DB안에 노래가 없을경우 BeatSaver조회하여 DB에 저장시킨뒤 곡을 보여준다." +
+            "Song Id를 Path Variable 로 전달받아 해당 노래를 조회한다. <br>" +
+                "만약 DB안에 노래가 없을경우 BeatSaver조회하여 DB에 저장시킨뒤 곡을 보여준다. <br>" +
                 "단, 노래가 조회되지않을 경우 예외를 발생시킨다."
     )
     @ApiResponses({
@@ -85,8 +85,8 @@ public class SongController {
     @Tag(name = "Song")
     @Operation(summary = "[App] 노래 조회 API - BeatSaverAPI",
         description =
-            "Song Hash를 Path Variable 로 전달받아 해당 노래를 조회한다." +
-                "만약 DB안에 노래가 없을경우 BeatSaver조회하여 DB에 저장시킨뒤 곡을 보여준다." +
+            "Song Hash를 Path Variable 로 전달받아 해당 노래를 조회한다. <br>" +
+                "만약 DB안에 노래가 없을경우 BeatSaver조회하여 DB에 저장시킨뒤 곡을 보여준다. <br>" +
                 "단, 노래가 조회되지않을 경우 예외를 발생시킨다."
     )
     @ApiResponses({

@@ -24,24 +24,31 @@ public class LeagueRepositoryImpl implements LeagueRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     private QLeague league = QLeague.league;
+
     @Override
     public Page<League> findAllLeagueWithPage(Pageable pageable, LeagueStatusType leagueStatusType, String sort) {
         List<League> results = queryFactory.selectFrom(league)
-                .where(
-                        // todo: ㅋㅋㅋㅋ 어캐해 이거 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-                        leagueStatusType == TYPE_WAIT ? league.leagueStartDtime.after(now()) : null,
-                        leagueStatusType == TYPE_COMPLETE ? league.leagueEndDtime.before(now()) : null,
-                        leagueStatusType == TYPE_PROCESS ? (league.leagueStartDtime.before(now())) : null,
-                        leagueStatusType == TYPE_PROCESS ? league.leagueEndDtime.after(now())  : null
-                )
-                .orderBy(orderBySort(sort))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+            .where(
+                // todo: ㅋㅋㅋㅋ 어캐해 이거 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+                leagueStatusType == TYPE_WAIT ? league.leagueStartDtime.after(now()) : null,
+                leagueStatusType == TYPE_COMPLETE ? league.leagueEndDtime.before(now()) : null,
+                leagueStatusType == TYPE_PROCESS ? (league.leagueStartDtime.before(now())) : null,
+                leagueStatusType == TYPE_PROCESS ? league.leagueEndDtime.after(now()) : null
+            )
+            .orderBy(orderBySort(sort))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
         Long totalCount = queryFactory.select(league.count())
-                .from(league)
-                .fetchOne();
+            .from(league)
+            .where(
+                leagueStatusType == TYPE_WAIT ? league.leagueStartDtime.after(now()) : null,
+                leagueStatusType == TYPE_COMPLETE ? league.leagueEndDtime.before(now()) : null,
+                leagueStatusType == TYPE_PROCESS ? (league.leagueStartDtime.before(now())) : null,
+                leagueStatusType == TYPE_PROCESS ? league.leagueEndDtime.after(now()) : null
+            )
+            .fetchOne();
 
         return new PageImpl<>(results, pageable, totalCount);
     }
@@ -49,11 +56,12 @@ public class LeagueRepositoryImpl implements LeagueRepositoryCustom {
     /**
      * 정렬 순 Order Specifier
      * 기본 동작은 최신순으로 동작한다.
+     *
      * @param sort
      * @return
      */
     public OrderSpecifier<LocalDateTime> orderBySort(String sort) {
-        if(sort != null) {
+        if (sort != null) {
             switch (sort) {
                 case "latest":
                     return league.createdDtime.desc();

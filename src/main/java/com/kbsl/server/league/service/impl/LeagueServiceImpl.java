@@ -81,7 +81,7 @@ public class LeagueServiceImpl implements LeagueService {
     public Page<LeagueResponseDto> findLeagues(Integer page, LeagueStatusType leagueStatusType, String sort, Integer elementCnt) {
 
         // 페이징 객체를 생성한다.
-        Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
         Page<League> leagues = leagueRepository.findAllLeagueWithPage(pageable, leagueStatusType, sort);
         return leagues.map(this::convertToLeagueResponseDto);
     }
@@ -149,7 +149,7 @@ public class LeagueServiceImpl implements LeagueService {
         LocalDateTime startDate = leagueEntity.getLeagueStartDtime();
         LocalDateTime endDate = leagueEntity.getLeagueEndDtime();
 
-        Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
 
         return scoreRepository.findAllScoreBySongSeqAndLeagueDateWithPage(songSeq, startDate, endDate, pageable, sort)
             .map(test -> ScoreResponseDto.builder().entity(test).build());

@@ -52,7 +52,7 @@ public class ScoreServiceImpl implements ScoreService {
         /**
          * 페이징 객체를 생성한다.
          */
-        Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
 
         return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
             .map(score -> ScoreResponseDto.builder().entity(score).build());
@@ -66,7 +66,7 @@ public class ScoreServiceImpl implements ScoreService {
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
 
         // 페이징 객체를 생성한다.
-        Pageable pageable = PageRequest.of(page, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
 
         return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
             .map(score -> ScoreResponseDto.builder().entity(score).build());

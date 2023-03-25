@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/**/auth/**").permitAll()
                 .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
+                .antMatchers("/**/rank/**").permitAll()
                 .antMatchers("/**/league/**").permitAll()
                 .antMatchers("/**/score/**").permitAll()
                 .antMatchers("/**/user/**").permitAll()
