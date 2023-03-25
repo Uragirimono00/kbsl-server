@@ -43,7 +43,7 @@ public class SongController {
         return ResponseEntity.ok(songService.createLeagueSong(leagueSeq, songSaveRequestDto));
     }
 
-    @GetMapping(value = "/{songSeq}")
+    @GetMapping(value = "/adm/{songSeq}")
     @Tag(name = "Song")
     @Operation(summary = "[App] 노래 단건 조회 API",
         description =

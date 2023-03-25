@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .antMatchers("/**/league/**").permitAll()
                 .antMatchers("/**/score/**").permitAll()
                 .antMatchers("/**/user/**").permitAll()
+                .antMatchers("/**/song/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(authJwtFilter, UsernamePasswordAuthenticationFilter.class)
