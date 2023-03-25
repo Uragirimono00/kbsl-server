@@ -100,14 +100,14 @@ public class SongServiceImpl implements SongService {
     @Transactional
     public List<SongApiResponseDto> findSongById(String id) throws Exception {
 
-        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongId(id);
+        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongId(id.toLowerCase());
 
         if (songResponseDtoList.isEmpty()) {
-            songResponseDtoList = saveSongByIdFromBeatSaverAPI(id, songRepository);
+            songResponseDtoList = saveSongByIdFromBeatSaverAPI(id.toLowerCase(), songRepository);
         }
 
         if (songResponseDtoList.isEmpty()) {
-            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songId = " + id);
+            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songId = " + id.toLowerCase());
         }
 
         return songResponseDtoList;
@@ -116,14 +116,14 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public List<SongApiResponseDto> findSongByHash(String hash) throws Exception {
-        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongHash(hash);
+        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongHash(hash.toLowerCase());
 
         if (songResponseDtoList.isEmpty()) {
-            songResponseDtoList = saveSongByIdFromBeatSaverAPI(hash, songRepository);
+            songResponseDtoList = saveSongByIdFromBeatSaverAPI(hash.toLowerCase(), songRepository);
         }
 
         if (songResponseDtoList.isEmpty()) {
-            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songHash = " + hash);
+            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songHash = " + hash.toLowerCase());
         }
 
         return songResponseDtoList;

@@ -29,7 +29,7 @@ public class BeatSaverUtils {
 
         URI uri = UriComponentsBuilder
             .fromUriString("https://api.beatsaver.com")
-            .pathSegment("maps", "hash", songHash)
+            .pathSegment("maps", "hash", songHash.toLowerCase())
             .encode()
             .build()
             .toUri();
@@ -88,7 +88,7 @@ public class BeatSaverUtils {
 
         URI uri = UriComponentsBuilder
             .fromUriString("https://api.beatsaver.com")
-            .pathSegment("maps", "id", id)
+            .pathSegment("maps", "id", id.toLowerCase())
             .encode()
             .build()
             .toUri();
