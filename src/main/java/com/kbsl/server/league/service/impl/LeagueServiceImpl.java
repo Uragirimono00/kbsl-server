@@ -43,22 +43,19 @@ public class LeagueServiceImpl implements LeagueService {
     /**
      * 리그를 생성한다.
      * 단, 유저의 정보가 조회되지않을 경우 예외를 발생시킨다.
+     *
+     * @param steamId
      * @param leagueSaveRequestDto
      * @return
      * @throws Exception
      */
     @Override
     @Transactional
-    public LeagueResponseDto createLeague(LeagueSaveRequestDto leagueSaveRequestDto) throws Exception {
-        /**
-         * 유저 정보를 가져온 후, DTO 에 삽입한다.
-         */
-        PrincipalUserDetail userDetail = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public LeagueResponseDto createLeague(String steamId, LeagueSaveRequestDto leagueSaveRequestDto) throws Exception {
         /**
          * 유저에 대한 정보 및 추가 정보를 수정한다.
          */
-        User userEntity = userRepository.findBySeq(userDetail.getUserSeq())
+        User userEntity = userRepository.findBySteamId(steamId)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
         League leagueEntity = leagueRepository.save(leagueSaveRequestDto.toEntity(userEntity));

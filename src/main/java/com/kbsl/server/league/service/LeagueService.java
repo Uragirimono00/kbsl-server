@@ -8,7 +8,7 @@ import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import org.springframework.data.domain.Page;
 
 public interface LeagueService {
-    LeagueResponseDto createLeague(LeagueSaveRequestDto leagueSaveRequestDto) throws Exception;
+    LeagueResponseDto createLeague(String steamId, LeagueSaveRequestDto leagueSaveRequestDto) throws Exception;
 
     Page<LeagueResponseDto> findLeagues(Integer page, LeagueStatusType leagueStatusType, String sort, Integer elementCnt) throws Exception;
 

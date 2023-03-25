@@ -25,6 +25,7 @@ public class Rank extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    @Enumerated(EnumType.STRING)
     private RankProcessType rankProcessType;
 
     private Double stars;
