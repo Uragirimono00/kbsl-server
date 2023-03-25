@@ -11,5 +11,7 @@ public interface SongService {
 
     SongResponseDto findSong(Long songSeq) throws Exception;
 
-    List<SongApiResponseDto> findIdApi(String id) throws Exception;
+    List<SongApiResponseDto> findSongById(String id) throws Exception;
+
+    List<SongApiResponseDto> findSongByHash(String hash) throws Exception;
 }

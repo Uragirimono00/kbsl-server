@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class BeatSaverUtils {
-    public static void saveSongByHashFromBeatSaverAPI(String songHash, SongRepository songRepository){
+    public static List<SongApiResponseDto> saveSongByHashFromBeatSaverAPI(String songHash, SongRepository songRepository){
         List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
 
         URI uri = UriComponentsBuilder
@@ -79,6 +79,7 @@ public class BeatSaverUtils {
                 songApiResponseDtoArrayList.add(SongApiResponseDto.builder().entity(songEntity).build());
             }
         }
+        return songApiResponseDtoArrayList;
     }
 
     public static List<SongApiResponseDto> saveSongByIdFromBeatSaverAPI(String id, SongRepository songRepository){
@@ -138,4 +139,5 @@ public class BeatSaverUtils {
         }
         return songApiResponseDtoArrayList;
     }
+
 }

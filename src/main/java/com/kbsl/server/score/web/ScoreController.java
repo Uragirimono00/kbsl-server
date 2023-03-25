@@ -51,9 +51,9 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.findSongScore(songSeq, page, sort, elementCnt));
     }
 
-    @GetMapping(value = "/adm")
+    @GetMapping(value = "/beatleader/adm")
     @Tag(name = "Score")
-    @Operation(summary = "[App] 점수 조회 및 업데이트 API - JWT사용",
+    @Operation(summary = "[App] 점수 조회 및 업데이트 API - BeatLeaderAPI, JWT사용",
         description =
             "노래 시퀀스를 전달받아 해당 노래에 점수를 조회 및 업데이트 한다."
     )

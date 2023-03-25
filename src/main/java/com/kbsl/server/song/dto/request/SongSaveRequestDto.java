@@ -18,47 +18,22 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 public class SongSaveRequestDto {
-    @Schema(description = "노래 ID")
-    private String songId;
 
     @Schema(description = "노래 해쉬")
     private String songHash;
 
-    @Schema(description = "노래 제목")
-    private String songName;
     @Schema(description = "노래 난이도", example = "ExpertPlus")
     private SongDifficultyType songDifficulty;
 
     @Schema(description = "노래 모드", example = "Standard")
     private SongModeType songModeType;
 
-    @Schema(description = "업로더 이름")
-    private String uploaderName;
-
-    @Schema(description = "커버 사진")
-    private String coverUrl;
-
-    @Schema(description = "노래")
-    private String previewUrl;
-
-    @Schema(description = "다운로드 경로")
-    private String downloadUrl;
-
-    @Schema(description = "퍼블리쉬 시간")
-    private LocalDateTime publishedDtime;
 
     public Song toEntity() {
         return Song.builder()
-            .songId(songId)
-            .songName(songName)
             .songHash(songHash)
             .songDifficulty(songDifficulty)
             .songModeType(songModeType)
-            .uploaderName(uploaderName)
-            .coverUrl(coverUrl)
-            .previewUrl(previewUrl)
-            .downloadUrl(downloadUrl)
-            .publishedDtime(publishedDtime)
             .build();
     }
 }

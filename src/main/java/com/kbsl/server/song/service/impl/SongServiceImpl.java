@@ -98,11 +98,35 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional
-    public List<SongApiResponseDto> findIdApi(String id) throws Exception {
+    public List<SongApiResponseDto> findSongById(String id) throws Exception {
 
-        List<SongApiResponseDto> songApiResponseDtoArrayList = saveSongByIdFromBeatSaverAPI(id, songRepository);
+        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongId(id);
 
-        return songApiResponseDtoArrayList;
+        if (songResponseDtoList.isEmpty()) {
+            songResponseDtoList = saveSongByIdFromBeatSaverAPI(id, songRepository);
+        }
+
+        if (songResponseDtoList.isEmpty()) {
+            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songId = " + id);
+        }
+
+        return songResponseDtoList;
+    }
+
+    @Override
+    @Transactional
+    public List<SongApiResponseDto> findSongByHash(String hash) throws Exception {
+        List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongHash(hash);
+
+        if (songResponseDtoList.isEmpty()) {
+            songResponseDtoList = saveSongByIdFromBeatSaverAPI(hash, songRepository);
+        }
+
+        if (songResponseDtoList.isEmpty()) {
+            throw new RestException(HttpStatus.NOT_FOUND, "조회된 노래가 없습니다. songHash = " + hash);
+        }
+
+        return songResponseDtoList;
     }
 
 }

@@ -49,7 +49,7 @@ public class BeatLeaderUtils {
              */
             long scoreSeq = Long.parseLong(responseJson.get("id").toString());
             if (scoreRepository.existsByScoreSeq(scoreSeq)) {
-                log.info("This score has already been registered. scoreSeq = " + scoreSeq);
+                log.info("이미 등록된 점수입니다. scoreSeq = " + scoreSeq);
                 return;
             }
 
