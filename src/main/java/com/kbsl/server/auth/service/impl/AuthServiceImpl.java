@@ -217,6 +217,7 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
 
+        log.info(oAuthUserInfo+"이것은 무엇일까용?");
         log.info("oauth.getUsername {}", oAuthUserInfo.getUserName());
         log.info("oauth.getEmail {}", oAuthUserInfo.getEmail());
 

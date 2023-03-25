@@ -1,6 +1,7 @@
 package com.kbsl.server.rank.web;
 
 import com.kbsl.server.league.enums.LeagueStatusType;
+import com.kbsl.server.rank.dto.request.RankUpdateRequestDto;
 import com.kbsl.server.rank.dto.response.RankResponseDto;
 import com.kbsl.server.rank.enums.RankProcessType;
 import com.kbsl.server.rank.service.RankService;
@@ -81,8 +82,8 @@ public class RankController {
     })
     public ResponseEntity<RankResponseDto> updateRank(
         @PathVariable(value = "rankSeq") Long rankSeq,
-        @RequestParam("steamId") String steamId
+        @RequestBody RankUpdateRequestDto rankUpdateRequestDto
     ) throws Exception {
-        return ResponseEntity.ok(rankService.updateRank(rankSeq, steamId));
+        return ResponseEntity.ok(rankService.updateRank(rankSeq, rankUpdateRequestDto));
     }
 }
