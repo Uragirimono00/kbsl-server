@@ -19,7 +19,10 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.JSONValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +33,13 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByHashFromBeatSaverAPI;
 import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByIdFromBeatSaverAPI;
+import static com.kbsl.server.boot.util.DiscordUtils.LeagueCreateMessage;
 
 @Slf4j
 @Service

@@ -27,8 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.kbsl.server.boot.util.DiscordUtils.LeagueCreateMessage;
 
 @Slf4j
 @Service
@@ -59,6 +62,10 @@ public class LeagueServiceImpl implements LeagueService {
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
         League leagueEntity = leagueRepository.save(leagueSaveRequestDto.toEntity(userEntity));
+
+        LeagueCreateMessage(leagueSaveRequestDto.getLeagueName() + " 리그가 시작되었습니다!! \n" +
+            "리그는 " + leagueSaveRequestDto.getLeagueStartDtime().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")) + " 부터 시작합니다!! \n" +
+            "https://www.kbsl.dev/league/detail?" + leagueEntity.getSeq());
 
         return LeagueResponseDto.builder().entity(leagueEntity).build();
     }

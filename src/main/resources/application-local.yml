@@ -52,3 +52,7 @@ spring:
             tokenUri: https://discord.com/api/oauth2/token
             userInfoUri: https://discord.com/api/v8/users/@me
             userNameAttribute: username
+
+webhook:
+  discord:
+    league: https://discord.com/api/webhooks/1089137750839656539/AMIOhygS4pfCYLT1J4jez-XThgkYzG_R8SRDhFHnh0w4Fs_JJI3loFfZKockaR9vITqk
