@@ -35,11 +35,11 @@ public class LeagueResponseDto {
     private String leagueName;
 
     @Schema(description = "리그 시작일")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime leagueStartDtime;
 
     @Schema(description = "리그 종료일")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime leagueEndDtime;
 
     @Schema(description = "리그 설명")

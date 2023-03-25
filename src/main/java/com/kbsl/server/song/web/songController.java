@@ -40,11 +40,11 @@ public class songController {
             @ApiResponse(responseCode = "404", description = "리그 미조회")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<List<SongResponseDto>> createSong(
+    public ResponseEntity<List<SongResponseDto>> createLeagueSong(
             @PathVariable("leagueSeq") Long leagueSeq,
             @RequestBody List<SongSaveRequestDto> songSaveRequestDto
     ) throws Exception {
-        return ResponseEntity.ok(songService.createSong(leagueSeq, songSaveRequestDto));
+        return ResponseEntity.ok(songService.createLeagueSong(leagueSeq, songSaveRequestDto));
     }
 
     @GetMapping(value = "/{songSeq}")

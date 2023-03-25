@@ -32,6 +32,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByHashFromBeatSaverAPI;
+import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByIdFromBeatSaverAPI;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional
-    public List<SongResponseDto> createSong(Long leagueSeq, List<SongSaveRequestDto> songSaveRequestDto) throws Exception {
+    public List<SongResponseDto> createLeagueSong(Long leagueSeq, List<SongSaveRequestDto> songSaveRequestDto) throws Exception {
         /**
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
          */
@@ -65,60 +68,10 @@ public class SongServiceImpl implements SongService {
 
             Song alreadySongEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
-            Song songEntity = new Song();
-
             if (alreadySongEntity == null){
-                URI uri = UriComponentsBuilder
-                    .fromUriString("https://api.beatsaver.com")
-                    .pathSegment("maps", "hash", eachSong.getSongHash())
-                    .encode()
-                    .build()
-                    .toUri();
-
-                log.info("Request URI: " + uri);
-
-                RestTemplate restTemplate = new RestTemplate();
-                String response = restTemplate.getForObject(uri, String.class);
-
-                /**
-                 * BeatLeader 데이터가 존재하지 않을경우 패스한다.
-                 */
-                JSONObject responseJson = (JSONObject) JSONValue.parse(response);
-                if (responseJson == null) {
-                    throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatLeader API: " + response);
-                }
-//        log.info(response);
-
-                JSONObject responseUploaderJson = (JSONObject) JSONValue.parse(responseJson.get("uploader").toString());
-                JSONArray responseVersionsJson = (JSONArray) JSONValue.parse(responseJson.get("versions").toString());
-
-
-                // 플레이 한 노래 저장
-                for (Object responseVersionObject : responseVersionsJson){
-                    JSONObject responseVersionsJsonObject = (JSONObject) JSONValue.parse(responseVersionObject.toString());
-                    JSONArray responseDiffsJson = (JSONArray) JSONValue.parse(responseVersionsJsonObject.get("diffs").toString());
-
-                    for (Object responseDiffObject : responseDiffsJson) {
-                        JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
-
-                        songEntity = Song.builder()
-                            .songId(responseJson.get("id").toString())
-                            .songHash(responseVersionsJsonObject.get("hash").toString())
-                            .songName(responseJson.get("name").toString())
-                            .songDifficulty(SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString()))
-                            .songModeType(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()))
-                            .uploaderName(responseUploaderJson.get("name").toString())
-                            .coverUrl(responseVersionsJsonObject.get("coverURL").toString())
-                            .previewUrl(responseVersionsJsonObject.get("previewURL").toString())
-                            .downloadUrl(responseVersionsJsonObject.get("downloadURL").toString())
-                            .publishedDtime(LocalDateTime.parse(responseVersionsJsonObject.get("createdAt").toString()))
-                            .build();
-
-                        songRepository.save(songEntity);
-                    }
-                }
+                saveSongByHashFromBeatSaverAPI(eachSong.getSongHash(), songRepository);
             }
-            songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
+            Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
             leagueEntity.getSongsList().add(songEntity);
 
@@ -147,57 +100,8 @@ public class SongServiceImpl implements SongService {
     @Transactional
     public List<SongApiResponseDto> findIdApi(String id) throws Exception {
 
-        List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
+        List<SongApiResponseDto> songApiResponseDtoArrayList = saveSongByIdFromBeatSaverAPI(id, songRepository);
 
-        URI uri = UriComponentsBuilder
-            .fromUriString("https://api.beatsaver.com")
-            .pathSegment("maps", "id", id)
-            .encode()
-            .build()
-            .toUri();
-
-        log.info("Request URI: " + uri);
-
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(uri, String.class);
-
-        /**
-         * BeatLeader 데이터가 존재하지 않을경우 패스한다.
-         */
-        JSONObject responseJson = (JSONObject) JSONValue.parse(response);
-        if (responseJson == null) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "잘못된 JSON 응답입니다. BeatLeader API: " + response);
-        }
-//        log.info(response);
-
-        JSONObject responseUploaderJson = (JSONObject) JSONValue.parse(responseJson.get("uploader").toString());
-        JSONArray responseVersionsJson = (JSONArray) JSONValue.parse(responseJson.get("versions").toString());
-
-        for (Object responseVersionObject : responseVersionsJson) {
-            JSONObject responseVersionsJsonObject = (JSONObject) JSONValue.parse(responseVersionObject.toString());
-            JSONArray responseDiffsJson = (JSONArray) JSONValue.parse(responseVersionsJsonObject.get("diffs").toString());
-
-            for (Object responseDiffObject : responseDiffsJson) {
-                JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-
-                Song songEntity = Song.builder()
-                    .songId(responseJson.get("id").toString())
-                    .songHash(responseVersionsJsonObject.get("hash").toString())
-                    .songName(responseJson.get("name").toString())
-                    .songDifficulty(SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString()))
-                    .songModeType(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()))
-                    .uploaderName(responseUploaderJson.get("name").toString())
-                    .coverUrl(responseVersionsJsonObject.get("coverURL").toString())
-                    .previewUrl(responseVersionsJsonObject.get("previewURL").toString())
-                    .downloadUrl(responseVersionsJsonObject.get("downloadURL").toString())
-//                    todo: 이거 버그임 ㄱㄷ
-                    .publishedDtime(LocalDateTime.parse(responseVersionsJsonObject.get("createdAt").toString(), formatter))
-                    .build();
-                songApiResponseDtoArrayList.add(SongApiResponseDto.builder().entity(songEntity).build());
-            }
-        }
         return songApiResponseDtoArrayList;
     }
 

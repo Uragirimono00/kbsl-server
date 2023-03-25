@@ -1,5 +1,6 @@
 package com.kbsl.server.score.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.song.domain.model.Song;
@@ -69,6 +70,7 @@ public class ScoreResponseDto {
     private String comment;
 
     @Schema(description = "기록된 시간 유닉스 타임")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime timePost;
 
     @Builder

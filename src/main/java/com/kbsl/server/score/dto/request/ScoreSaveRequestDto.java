@@ -91,7 +91,6 @@ public class ScoreSaveRequestDto {
                 .playCount(playCount)
                 .accLeft(accLeft)
                 .accRight(accRight)
-                .comment(comment)
                 .timePost(timePost)
                 .build();
     }

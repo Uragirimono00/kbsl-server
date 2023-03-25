@@ -1,5 +1,6 @@
 package com.kbsl.server.song.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.enums.SongDifficultyType;
 import com.kbsl.server.song.enums.SongModeType;
@@ -43,6 +44,7 @@ public class SongApiResponseDto {
     private String downloadUrl;
 
     @Schema(description = "퍼블리쉬 시간")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime publishedDtime;
 
     @Builder
