@@ -32,8 +32,7 @@ public class LeagueRepositoryImpl implements LeagueRepositoryCustom {
                 // todo: ㅋㅋㅋㅋ 어캐해 이거 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
                 leagueStatusType == TYPE_WAIT ? league.leagueStartDtime.after(now()) : null,
                 leagueStatusType == TYPE_COMPLETE ? league.leagueEndDtime.before(now()) : null,
-                leagueStatusType == TYPE_PROCESS ? (league.leagueStartDtime.before(now())) : null,
-                leagueStatusType == TYPE_PROCESS ? league.leagueEndDtime.after(now()) : null
+                leagueStatusType == TYPE_PROCESS ? league.leagueStartDtime.before(now()).and(league.leagueEndDtime.after(now())) : null
             )
             .orderBy(orderBySort(sort))
             .offset(pageable.getOffset())
@@ -45,9 +44,8 @@ public class LeagueRepositoryImpl implements LeagueRepositoryCustom {
             .where(
                 leagueStatusType == TYPE_WAIT ? league.leagueStartDtime.after(now()) : null,
                 leagueStatusType == TYPE_COMPLETE ? league.leagueEndDtime.before(now()) : null,
-                leagueStatusType == TYPE_PROCESS ? (league.leagueStartDtime.before(now())) : null,
-                leagueStatusType == TYPE_PROCESS ? league.leagueEndDtime.after(now()) : null
-            )
+                leagueStatusType == TYPE_PROCESS ? league.leagueStartDtime.before(now()).and(league.leagueEndDtime.after(now())) : null
+                )
             .fetchOne();
 
         return new PageImpl<>(results, pageable, totalCount);

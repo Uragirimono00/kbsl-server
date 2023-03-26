@@ -39,7 +39,7 @@ public class JwtUtils {
                 .setSubject(userDetail.getUsername())
                 .setIssuedAt(new Date()) // 토큰 발행 일자
                 // todo : 개발중임으로 잠시 토큰 만료시간을 1주일로 잡아두겠습니다.
-                .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 7))) // 엑세스 토큰
+                .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 50))) // 엑세스 토큰
                 .setIssuer("learningCode")
                 .signWith(getKey(), SignatureAlgorithm.HS512)
                 .claim("name", userDetail.getUsername())
@@ -53,7 +53,7 @@ public class JwtUtils {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 // todo : 개발중임으로 잠시 토큰 만료시간을 1주일로 잡아두겠습니다.
-                .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 14)))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 100)))
                 .setIssuer("Tester")
                 .signWith(getKey(), SignatureAlgorithm.HS512)
                 .claim("name", userDetails.getUsername())

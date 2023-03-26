@@ -2,7 +2,6 @@ package com.kbsl.server.score.service.impl;
 
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.boot.util.BeatLeaderUtils;
-import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
 import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
@@ -36,7 +35,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Transactional
-    public Page<ScoreResponseDto> updateSongScore(Long songSeq, Integer page, String sort, Integer elementCnt) throws Exception {
+    public ScoreResponseDto updateSongScore(Long songSeq) throws Exception {
 
         Song songEntity = songRepository.findBySeq(songSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
@@ -49,13 +48,7 @@ public class ScoreServiceImpl implements ScoreService {
             BeatLeaderUtils.saveScoreFromBeatLeaderAPI(user, songEntity, scoreRepository);
         }
 
-        /**
-         * 페이징 객체를 생성한다.
-         */
-        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
-
-        return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
-            .map(score -> ScoreResponseDto.builder().entity(score).build());
+        return null;
 
     }
 
@@ -114,5 +107,22 @@ public class ScoreServiceImpl implements ScoreService {
         scoreRepository.save(score);
 
         return ScoreResponseDto.builder().entity(score).build();
+    }
+
+    @Override
+    @Transactional
+    public ScoreResponseDto updateScoreFromBeatLeader(Long userSeq) throws Exception {
+        /**
+         * 유저 정보를 가져온 후, DTO 에 삽입한다.
+         */
+        User userEntity = userRepository.findBySeq(userSeq)
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
+
+        if (userEntity.getSteamId() == null){
+            throw new RestException(HttpStatus.NOT_FOUND, "유저의 SteamId(BeatLeaderId)를 찾을 수 없습니다. userSeq = " + userSeq);
+        }
+
+
+        return null;
     }
 }

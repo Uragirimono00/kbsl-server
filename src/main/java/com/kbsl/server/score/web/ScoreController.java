@@ -33,57 +33,72 @@ public class ScoreController {
     @GetMapping(value = "")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 조회 API - Pagination",
-            description =
-                    "노래 시퀀스를 전달받아 해당 노래에 점수를 조회한다."
+        description =
+            "노래 시퀀스를 전달받아 해당 노래에 점수를 조회한다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음"),
-            @ApiResponse(responseCode = "404", description = "리그 미조회")
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "403", description = "권한 없음"),
+        @ApiResponse(responseCode = "404", description = "노래 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<ScoreResponseDto>> findSongScore(
-            @RequestParam("songSeq") Long songSeq,
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
-            @RequestParam(required = false, defaultValue = "10") Integer elementCnt
+        @RequestParam("songSeq") Long songSeq,
+        @RequestParam(value = "page") Integer page,
+        @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
+        @RequestParam(required = false, defaultValue = "10") Integer elementCnt
     ) throws Exception {
         return ResponseEntity.ok(scoreService.findSongScore(songSeq, page, sort, elementCnt));
     }
 
-    @GetMapping(value = "/beatleader/adm")
+    @GetMapping(value = "/beatleader/song/adm/{songSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 조회 및 업데이트 API - BeatLeaderAPI, JWT사용",
         description =
             "노래 시퀀스를 전달받아 해당 노래에 점수를 조회 및 업데이트 한다."
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
         @ApiResponse(responseCode = "403", description = "권한 없음"),
-        @ApiResponse(responseCode = "404", description = "리그 미조회")
+        @ApiResponse(responseCode = "404", description = "노래 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<ScoreResponseDto>> updateSongScore(
-        @RequestParam("songSeq") Long songSeq,
-        @RequestParam(value = "page") Integer page,
-        @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
-        @RequestParam(required = false, defaultValue = "10") Integer elementCnt
+    public ResponseEntity<ScoreResponseDto> updateSongScore(
+        @PathVariable("songSeq") Long songSeq
     ) throws Exception {
-        return ResponseEntity.ok(scoreService.updateSongScore(songSeq, page, sort, elementCnt));
+        return ResponseEntity.ok(scoreService.updateSongScore(songSeq));
+    }
+
+    @GetMapping(value = "/beatleader/user/adm/{userSeq}")
+    @Tag(name = "Score")
+    @Operation(summary = "[App] 특정 유저 점수 업데이트 및 조회 API - BeatLeaderAPI, JWT사용",
+        description =
+            "유저 시퀀스를 전달받아 해당 유저에 점수를 조회 및 업데이트 한다."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "403", description = "권한 없음"),
+        @ApiResponse(responseCode = "404", description = "노래 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ScoreResponseDto> updateScoreFromBeatLeader(
+        @PathVariable("userSeq") Long userSeq
+    ) throws Exception {
+        return ResponseEntity.ok(scoreService.updateScoreFromBeatLeader(userSeq));
     }
 
     @PostMapping(value = "")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 제출 API",
-            description =
-                    "요청자의 steamId를 이용하여 점수를 저장한다.")
+        description =
+            "요청자의 steamId를 이용하여 점수를 저장한다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "점수 저장 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음")
+        @ApiResponse(responseCode = "201", description = "점수 저장 성공"),
+        @ApiResponse(responseCode = "403", description = "권한 없음")
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ScoreResponseDto> saveScoreWithSteamId(
-            @RequestBody ScoreSaveRequestDto scoreSaveRequestDto
+        @RequestBody ScoreSaveRequestDto scoreSaveRequestDto
     ) throws Exception {
         return ResponseEntity.ok(scoreService.saveScoreWithSteamId(scoreSaveRequestDto));
     }
