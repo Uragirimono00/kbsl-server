@@ -5,7 +5,7 @@ import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import org.springframework.data.domain.Page;
 
 public interface ScoreService {
-    ScoreResponseDto updateSongScore(Long songSeq) throws Exception;
+    Boolean updateSongScoreFromBeatLeader(Long songSeq) throws Exception;
 
     Page<ScoreResponseDto> findSongScore(Long songSeq, Integer page, String sort, Integer elementCnt) throws Exception;
 

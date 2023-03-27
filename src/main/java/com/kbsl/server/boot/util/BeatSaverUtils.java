@@ -12,6 +12,7 @@ import com.nimbusds.jose.shaded.json.JSONValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -21,10 +22,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class BeatSaverUtils {
-    public static List<SongApiResponseDto> saveSongByHashFromBeatSaverAPI(String songHash, SongRepository songRepository){
+
+    private final SongRepository songRepository;
+
+    public List<SongApiResponseDto> saveSongByHashFromBeatSaverAPI(String songHash){
         List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
 
         URI uri = UriComponentsBuilder
@@ -40,7 +45,7 @@ public class BeatSaverUtils {
         String response = restTemplate.getForObject(uri, String.class);
 
         /**
-         * BeatLeader 데이터가 존재하지 않을경우 패스한다.
+         * BeatSaver 데이터가 존재하지 않을경우 패스한다.
          */
         JSONObject responseJson = (JSONObject) JSONValue.parse(response);
         if (responseJson == null) {
@@ -60,6 +65,11 @@ public class BeatSaverUtils {
 
             for (Object responseDiffObject : responseDiffsJson) {
                 JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
+
+                if (songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()), responseVersionsJsonObject.get("hash").toString(), SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString())) != null){
+                    log.error("이미 등록된 노래입니다. 패스합니다.");
+                    continue;
+                }
 
                 Song songEntity = Song.builder()
                     .songId(responseJson.get("id").toString())
@@ -82,7 +92,7 @@ public class BeatSaverUtils {
         return songApiResponseDtoArrayList;
     }
 
-    public static List<SongApiResponseDto> saveSongByIdFromBeatSaverAPI(String id, SongRepository songRepository){
+    public List<SongApiResponseDto> saveSongByIdFromBeatSaverAPI(String id){
 
         List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
 
@@ -99,7 +109,7 @@ public class BeatSaverUtils {
         String response = restTemplate.getForObject(uri, String.class);
 
         /**
-         * BeatLeader 데이터가 존재하지 않을경우 패스한다.
+         * BeatSaver 데이터가 존재하지 않을경우 패스한다.
          */
         JSONObject responseJson = (JSONObject) JSONValue.parse(response);
         if (responseJson == null) {
@@ -118,6 +128,11 @@ public class BeatSaverUtils {
                 JSONObject responseDiffsJsonObject = (JSONObject) JSONValue.parse(responseDiffObject.toString());
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSz");
+
+                if (songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(SongModeType.valueOf(responseDiffsJsonObject.get("characteristic").toString()), responseVersionsJsonObject.get("hash").toString(), SongDifficultyType.valueOf(responseDiffsJsonObject.get("difficulty").toString())) != null){
+                    log.error("이미 등록된 노래입니다. 패스합니다.");
+                    continue;
+                }
 
                 Song songEntity = Song.builder()
                     .songId(responseJson.get("id").toString())

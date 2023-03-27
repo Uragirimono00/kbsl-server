@@ -1,13 +1,8 @@
 package com.kbsl.server.score.web;
 
-import com.kbsl.server.league.dto.request.LeagueSaveRequestDto;
-import com.kbsl.server.league.dto.response.LeagueResponseDto;
 import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
 import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
-import com.kbsl.server.song.dto.request.SongSaveRequestDto;
-import com.kbsl.server.song.dto.response.SongResponseDto;
-import com.kbsl.server.user.dto.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,8 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @Tag(name = "Score", description = "점수 API")
@@ -63,13 +56,13 @@ public class ScoreController {
         @ApiResponse(responseCode = "404", description = "노래 미조회")
     })
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ScoreResponseDto> updateSongScore(
+    public ResponseEntity<Boolean> updateSongScoreFromBeatLeader(
         @PathVariable("songSeq") Long songSeq
     ) throws Exception {
-        return ResponseEntity.ok(scoreService.updateSongScore(songSeq));
+        return ResponseEntity.ok(scoreService.updateSongScoreFromBeatLeader(songSeq));
     }
 
-    @GetMapping(value = "/beatleader/user/adm/{userSeq}")
+    @GetMapping(value = "/beatleader/user/{userSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 특정 유저 점수 업데이트 및 조회 API - BeatLeaderAPI, JWT사용",
         description =

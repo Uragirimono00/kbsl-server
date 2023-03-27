@@ -1,6 +1,7 @@
 package com.kbsl.server.song.service.impl;
 
 import com.kbsl.server.boot.exception.RestException;
+import com.kbsl.server.boot.util.BeatSaverUtils;
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.song.domain.model.Song;
@@ -37,9 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByHashFromBeatSaverAPI;
-import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByIdFromBeatSaverAPI;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -48,6 +46,7 @@ public class SongServiceImpl implements SongService {
     private final UserRepository userRepository;
     private final LeagueRepository leagueRepository;
     private final SongRepository songRepository;
+    private final BeatSaverUtils beatSaverUtils;
 
     @Override
     @Transactional
@@ -74,7 +73,7 @@ public class SongServiceImpl implements SongService {
             Song alreadySongEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
             if (alreadySongEntity == null){
-                saveSongByHashFromBeatSaverAPI(eachSong.getSongHash(), songRepository);
+                beatSaverUtils.saveSongByHashFromBeatSaverAPI(eachSong.getSongHash());
             }
             Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(eachSong.getSongModeType(), eachSong.getSongHash(), eachSong.getSongDifficulty());
 
@@ -108,7 +107,7 @@ public class SongServiceImpl implements SongService {
         List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongId(id.toLowerCase());
 
         if (songResponseDtoList.isEmpty()) {
-            songResponseDtoList = saveSongByIdFromBeatSaverAPI(id.toLowerCase(), songRepository);
+            songResponseDtoList = beatSaverUtils.saveSongByIdFromBeatSaverAPI(id.toLowerCase());
         }
 
         if (songResponseDtoList.isEmpty()) {
@@ -124,7 +123,7 @@ public class SongServiceImpl implements SongService {
         List<SongApiResponseDto> songResponseDtoList = songRepository.findBySongHash(hash.toLowerCase());
 
         if (songResponseDtoList.isEmpty()) {
-            songResponseDtoList = saveSongByIdFromBeatSaverAPI(hash.toLowerCase(), songRepository);
+            songResponseDtoList = beatSaverUtils.saveSongByIdFromBeatSaverAPI(hash.toLowerCase());
         }
 
         if (songResponseDtoList.isEmpty()) {

@@ -2,6 +2,7 @@ package com.kbsl.server.score.service.impl;
 
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.boot.util.BeatLeaderUtils;
+import com.kbsl.server.boot.util.BeatSaverUtils;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
 import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
@@ -22,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.kbsl.server.boot.util.BeatSaverUtils.saveSongByHashFromBeatSaverAPI;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,10 +31,12 @@ public class ScoreServiceImpl implements ScoreService {
     private final UserRepository userRepository;
     private final SongRepository songRepository;
     private final ScoreRepository scoreRepository;
+    private final BeatLeaderUtils beatLeaderUtils;
+    private final BeatSaverUtils beatSaverUtils;
 
     @Override
     @Transactional
-    public ScoreResponseDto updateSongScore(Long songSeq) throws Exception {
+    public Boolean updateSongScoreFromBeatLeader(Long songSeq) throws Exception {
 
         Song songEntity = songRepository.findBySeq(songSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
@@ -45,10 +46,10 @@ public class ScoreServiceImpl implements ScoreService {
          */
         List<User> users = userRepository.findBySteamIdIsNotNull();
         for (User user : users) {
-            BeatLeaderUtils.saveScoreFromBeatLeaderAPI(user, songEntity, scoreRepository);
+            beatLeaderUtils.saveScoreFromBeatLeaderAPI(user, songEntity);
         }
 
-        return null;
+        return true;
 
     }
 
@@ -75,7 +76,7 @@ public class ScoreServiceImpl implements ScoreService {
         Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
 
         if (songEntity == null) {
-            saveSongByHashFromBeatSaverAPI(requestDto.getSongHash(), songRepository);
+            beatSaverUtils.saveSongByHashFromBeatSaverAPI(requestDto.getSongHash());
             // 노래 재 조회
             songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
             if (songEntity == null) {
@@ -121,6 +122,8 @@ public class ScoreServiceImpl implements ScoreService {
         if (userEntity.getSteamId() == null){
             throw new RestException(HttpStatus.NOT_FOUND, "유저의 SteamId(BeatLeaderId)를 찾을 수 없습니다. userSeq = " + userSeq);
         }
+
+        beatLeaderUtils.saveScoreByUserFromBeatLeaderAPI(userEntity);
 
 
         return null;
