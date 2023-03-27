@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -97,11 +96,14 @@ public class BeatLeaderUtils {
     }
 
     public void saveScoreByUserFromBeatLeaderAPI(User user) {
+        
+        // todo : 전체리스트 가져와서 전부다 넣도록 수정 해야해
+        
         URI uri = UriComponentsBuilder
                 .fromUriString(beatLeaderUrl)
                 .pathSegment("player", user.getSteamId(), "scores")
                 .queryParam("page", 1)
-                .queryParam("count", 1)
+                .queryParam("count", 30)
                 .encode()
                 .build()
                 .toUri();
@@ -120,12 +122,12 @@ public class BeatLeaderUtils {
             return;
         }
 
-        JSONArray responseVersionsJson = (JSONArray) JSONValue.parse(responseJson.get("data").toString());
-        log.info(responseVersionsJson.toString());
+        JSONArray responseDataJson = (JSONArray) JSONValue.parse(responseJson.get("data").toString());
+//        log.info(responseDataJson.toString());
 
         // 플레이 한 노래 저장
-        for (Object responseVersionObj : responseVersionsJson) {
-            JSONObject data = (JSONObject) JSONValue.parse(responseVersionObj.toString());
+        for (Object responseDataObj : responseDataJson) {
+            JSONObject data = (JSONObject) JSONValue.parse(responseDataObj.toString());
             JSONObject leaderboard = (JSONObject) JSONValue.parse(data.get("leaderboard").toString());
             JSONObject songInfo = (JSONObject) JSONValue.parse(leaderboard.get("song").toString());
             JSONObject playSongInfo = (JSONObject) JSONValue.parse(leaderboard.get("difficulty").toString());
@@ -140,18 +142,24 @@ public class BeatLeaderUtils {
                 log.info("이미 등록된 점수입니다. scoreSeq = " + scoreSeq);
                 continue;
             }
-            List<SongApiResponseDto> songApiResponseDtoList = beatSaverUtils.saveSongByHashFromBeatSaverAPI(songInfo.get("hash").toString());
 
-            List<SongApiResponseDto> songEntity = songApiResponseDtoList.stream().filter(song -> song.getSongModeType().equals(SongModeType.valueOf(playSongInfo.get("modeName").toString())) && song.getSongHash().equals(songInfo.get("hash").toString()) && song.getSongDifficulty().equals(SongDifficultyType.valueOf(playSongInfo.get("difficultyName").toString()))).collect(Collectors.toList());
-
-            log.info(songEntity.toString());
+            Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(SongModeType.valueOf(playSongInfo.get("modeName").toString()), songInfo.get("hash").toString().toLowerCase(), SongDifficultyType.valueOf(playSongInfo.get("difficultyName").toString()));
 
 
+            if (songEntity == null){
+                beatSaverUtils.saveSongByHashFromBeatSaverAPI(songInfo.get("hash").toString());
+            }
 
+            songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(SongModeType.valueOf(playSongInfo.get("modeName").toString()), songInfo.get("hash").toString().toLowerCase(), SongDifficultyType.valueOf(playSongInfo.get("difficultyName").toString()));
 
+            if (songEntity == null) {
+                log.info(playSongInfo.get("modeName").toString() + " / " + songInfo.get("hash").toString().toLowerCase() + " / " + playSongInfo.get("difficultyName").toString());
+                log.info("노래를 찾을 수 없습니다. 다음으로 넘어갑니다.");
+                continue;
+            }
             Score score = Score.builder()
                     .user(user)
-//                    .song(songEntity)
+                    .song(songEntity)
                     .scoreSeq(scoreSeq)
                     .baseScore(Long.parseLong(data.get("baseScore").toString()))
                     .modifiedScore(Long.parseLong(data.get("modifiedScore").toString()))

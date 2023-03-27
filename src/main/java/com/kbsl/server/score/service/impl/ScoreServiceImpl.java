@@ -125,7 +125,6 @@ public class ScoreServiceImpl implements ScoreService {
 
         beatLeaderUtils.saveScoreByUserFromBeatLeaderAPI(userEntity);
 
-
         return null;
     }
 }

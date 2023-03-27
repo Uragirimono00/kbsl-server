@@ -62,7 +62,7 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.updateSongScoreFromBeatLeader(songSeq));
     }
 
-    @GetMapping(value = "/beatleader/user/{userSeq}")
+    @GetMapping(value = "/beatleader/user/adm/{userSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 특정 유저 점수 업데이트 및 조회 API - BeatLeaderAPI, JWT사용",
         description =
