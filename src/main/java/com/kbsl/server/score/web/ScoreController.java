@@ -23,11 +23,11 @@ public class ScoreController {
 
     private final ScoreService scoreService;
 
-    @GetMapping(value = "")
+    @GetMapping(value = "/song/{songSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 조회 API - Pagination",
         description =
-            "노래 시퀀스를 전달받아 해당 노래에 점수를 조회한다."
+            "노래 시퀀스를 전달받아 해당 노래의 점수를 조회한다."
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -36,7 +36,7 @@ public class ScoreController {
     })
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<ScoreResponseDto>> findSongScore(
-        @RequestParam("songSeq") Long songSeq,
+        @PathVariable Long songSeq,
         @RequestParam(value = "page") Integer page,
         @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
         @RequestParam(required = false, defaultValue = "10") Integer elementCnt
@@ -44,11 +44,32 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.findSongScore(songSeq, page, sort, elementCnt));
     }
 
-    @GetMapping(value = "/beatleader/song/adm/{songSeq}")
+    @GetMapping(value = "/user/{userSeq}")
+    @Tag(name = "Score")
+    @Operation(summary = "[App] 점수 조회 API - Pagination",
+            description =
+                    "유저 시퀀스를 전달받아 해당 유저의 점수를 조회한다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음"),
+            @ApiResponse(responseCode = "404", description = "노래 미조회")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Page<ScoreResponseDto>> findUserScore(
+            @PathVariable Long userSeq,
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(required = false, defaultValue = "latest | old | ...") String sort,
+            @RequestParam(required = false, defaultValue = "10") Integer elementCnt
+    ) throws Exception {
+        return ResponseEntity.ok(scoreService.findUserScore(userSeq, page, sort, elementCnt));
+    }
+
+    @GetMapping(value = "/adm/beatleader/song/{songSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 조회 및 업데이트 API - BeatLeaderAPI, JWT사용",
         description =
-            "노래 시퀀스를 전달받아 해당 노래에 점수를 조회 및 업데이트 한다."
+            "노래 시퀀스를 전달받아 해당 노래의 점수를 조회 및 업데이트 한다."
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -62,11 +83,11 @@ public class ScoreController {
         return ResponseEntity.ok(scoreService.updateSongScoreFromBeatLeader(songSeq));
     }
 
-    @GetMapping(value = "/beatleader/user/adm/{userSeq}")
+    @GetMapping(value = "/adm/beatleader/user/{userSeq}")
     @Tag(name = "Score")
     @Operation(summary = "[App] 특정 유저 점수 업데이트 및 조회 API - BeatLeaderAPI, JWT사용",
         description =
-            "유저 시퀀스를 전달받아 해당 유저에 점수를 조회 및 업데이트 한다."
+            "유저 시퀀스를 전달받아 해당 유저의 점수를 조회 및 업데이트 한다."
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "조회 성공"),

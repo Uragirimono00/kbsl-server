@@ -5,6 +5,7 @@ import com.kbsl.server.league.domain.model.QLeague;
 import com.kbsl.server.score.domain.model.QScore;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.song.domain.model.QSong;
+import com.kbsl.server.user.domain.model.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,23 @@ public class ScoreRepositoryCustomImpl implements ScoreRepositoryCustom {
             )
             .from(score)
             .fetchOne();
+
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    @Override
+    public Page<Score> findAllScoreByUserWithPage(User userEntity, Pageable pageable, String sort) {
+        List<Score> results = queryFactory.selectFrom(score)
+                .where(score.user.eq(userEntity))
+                .orderBy(score.modifiedScore.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long totalCount = queryFactory.select(score.count())
+                .where(score.user.eq(userEntity))
+                .from(score)
+                .fetchOne();
 
         return new PageImpl<>(results, pageable, totalCount);
     }

@@ -12,4 +12,6 @@ public interface ScoreService {
     ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto scoreSaveRequestDto) throws Exception;
 
     ScoreResponseDto updateScoreFromBeatLeader(Long userSeq) throws Exception;
+
+    Page<ScoreResponseDto> findUserScore(Long userSeq, Integer page, String sort, Integer elementCnt) throws Exception;
 }

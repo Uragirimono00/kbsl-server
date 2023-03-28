@@ -127,4 +127,16 @@ public class ScoreServiceImpl implements ScoreService {
 
         return null;
     }
+
+    @Override
+    public Page<ScoreResponseDto> findUserScore(Long userSeq, Integer page, String sort, Integer elementCnt) throws Exception {
+        User userEntity = userRepository.findBySeq(userSeq)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
+
+        // 페이징 객체를 생성한다.
+        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
+
+        return scoreRepository.findAllScoreByUserWithPage(userEntity, pageable, sort)
+                .map(score -> ScoreResponseDto.builder().entity(score).build());
+    }
 }
