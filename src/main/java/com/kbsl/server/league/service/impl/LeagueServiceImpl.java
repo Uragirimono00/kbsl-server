@@ -123,7 +123,7 @@ public class LeagueServiceImpl implements LeagueService {
 
         if (!songList.isEmpty()) {
             List<SongResponseDto> songResponseDtoList = songList.stream()
-                    .map(postFile -> SongResponseDto.builder().entity(postFile).build())
+                    .map(song -> SongResponseDto.builder().entity(song).build())
                     .collect(Collectors.toList());
             responseDto.setSongsList(songResponseDtoList);
         }

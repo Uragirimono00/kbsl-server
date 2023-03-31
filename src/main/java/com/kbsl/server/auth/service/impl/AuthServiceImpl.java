@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.kbsl.server.auth.domain.model.AuthToken;
 import com.kbsl.server.auth.domain.repository.AuthTokenRepository;
 import com.kbsl.server.auth.dto.request.AccessTokenRefreshTokenDto;
+import com.kbsl.server.auth.dto.request.SteamLoginRequestDto;
 import com.kbsl.server.auth.dto.response.AccessTokenRefreshResponseDto;
 import com.kbsl.server.auth.dto.response.AuthLoginResponse;
 import com.kbsl.server.auth.dto.response.OauthTokenResponse;
@@ -181,6 +182,11 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.clearContext();
         return true;
+    }
+
+    @Override
+    public Object loginSteamId(Long steamId, SteamLoginRequestDto steamLoginRequestDto) {
+        return null;
     }
 
     /**
