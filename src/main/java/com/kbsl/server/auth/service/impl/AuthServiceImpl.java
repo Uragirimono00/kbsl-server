@@ -200,7 +200,7 @@ public class AuthServiceImpl implements AuthService {
             .queryParam("key", wepApiKey)
             .queryParam("appid",appId)
             .queryParam("ticket", ticket)
-            .queryParam("identity", ticket)
+            .queryParam("identity", "api.kbsl.dev")
             .encode()
             .build()
             .toUri();
