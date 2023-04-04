@@ -39,7 +39,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -191,15 +190,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthLoginResponse authSteam(String code) throws Exception {
+    public AuthLoginResponse authSteam(String ticket, String appId) throws Exception {
         String steamApiUrl = "https://api.steampowered.com";
         String wepApiKey = "5C079DD9A9BFF5F7040586E555524427";
         URI uri = UriComponentsBuilder
             .fromUriString(steamApiUrl)
             .pathSegment("ISteamUserAuth", "AuthenticateUserTicket", "v0001")
             .queryParam("key", wepApiKey)
-            .queryParam("appid","")
-            .queryParam("ticket", "")
+            .queryParam("appid",appId)
+            .queryParam("ticket", ticket)
             .encode()
             .build()
             .toUri();
