@@ -190,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthLoginResponse authSteam(String ticket) throws Exception {
+    public AuthLoginResponse authSteam(String ticket, String identity) throws Exception {
         String steamApiUrl = "https://api.steampowered.com";
         String wepApiKey = "5C079DD9A9BFF5F7040586E555524427";
         String appId = "620980";
@@ -200,7 +200,7 @@ public class AuthServiceImpl implements AuthService {
             .queryParam("key", wepApiKey)
             .queryParam("appid",appId)
             .queryParam("ticket", ticket)
-            .queryParam("identity", "api.kbsl.dev")
+            .queryParam("identity", identity)
             .encode()
             .build()
             .toUri();

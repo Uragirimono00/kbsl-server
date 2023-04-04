@@ -63,9 +63,10 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AuthLoginResponse> authSteam(
             @RequestParam String ticket,
+            @RequestParam String identity,
         HttpServletRequest request
     ) throws Exception {
-        return ResponseEntity.ok(authService.authSteam(ticket));
+        return ResponseEntity.ok(authService.authSteam(ticket, identity));
     }
 
     @PostMapping("token/refresh")
