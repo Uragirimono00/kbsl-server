@@ -13,6 +13,7 @@ import com.kbsl.server.auth.oauth.OAuthUserInfo;
 import com.kbsl.server.auth.oauth.provider.DiscordUserInfo;
 import com.kbsl.server.auth.service.AuthService;
 import com.kbsl.server.boot.exception.RestException;
+import com.kbsl.server.boot.util.DiscordUtils;
 import com.kbsl.server.boot.util.JwtUtils;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
@@ -38,6 +39,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    private final DiscordUtils discordUtils;
     private final UserRepository userRepository;
     private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
     private final JwtUtils jwtUtils;
@@ -202,9 +205,10 @@ public class AuthServiceImpl implements AuthService {
             .toUri();
 
         log.info("Request URI: " + uri);
-
         RestTemplate restTemplate = new RestTemplate();
         String response = restTemplate.getForObject(uri, String.class);
+
+        discordUtils.sendMessage(response);
 
         return null;
     }

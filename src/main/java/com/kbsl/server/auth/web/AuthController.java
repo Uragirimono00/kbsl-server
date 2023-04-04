@@ -99,23 +99,5 @@ public class AuthController {
         return new ResponseEntity<>(authService.logOut(accessToken), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{steamId}")
-    @Tag(name = "Auth")
-    @Operation(summary = "[App] SteamId를 통한 로그인",
-            description =
-                    "게임 내에서 SteamId를 통해 로그인을 시도한다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "과정 생성 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음"),
-            @ApiResponse(responseCode = "404", description = "리그 미조회")
-    })
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> loginSteamId(
-            @PathVariable("steamId") Long steamId,
-            @RequestBody SteamLoginRequestDto steamLoginRequestDto
-    ) throws Exception {
-        return ResponseEntity.ok(authService.loginSteamId(steamId, steamLoginRequestDto));
-    }
 }
 
