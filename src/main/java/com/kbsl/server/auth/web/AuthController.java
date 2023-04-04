@@ -50,6 +50,24 @@ public class AuthController {
         return new ResponseEntity<>(authService.authLogin(code, request.getServletPath()), HttpStatus.OK);
     }
 
+    @GetMapping("steam")
+    @Tag(name = "Auth")
+    @Operation(
+        summary = "Steam 로그인 API",
+        description = "Steam 에서 받은 세션Id를 이용해서 로그인을 수행한다. <br>"
+    )
+    @ApiResponses( {
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<AuthLoginResponse> authSteam(
+        @RequestParam String code,
+        HttpServletRequest request
+    ) throws Exception {
+        return ResponseEntity.ok(authService.authSteam(code));
+    }
+
     @PostMapping("token/refresh")
     @Tag(name = "Auth")
     @Operation(
