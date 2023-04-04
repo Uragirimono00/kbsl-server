@@ -9,5 +9,5 @@ public interface AuthService {
     String getUserName();
     AccessTokenRefreshResponseDto accessTokenRefresh(AccessTokenRefreshTokenDto requestDto);
     Boolean logOut(String accessToken);
-    AuthLoginResponse authSteam(String ticket, String appId) throws Exception;
+    AuthLoginResponse authSteam(String ticket) throws Exception;
 }

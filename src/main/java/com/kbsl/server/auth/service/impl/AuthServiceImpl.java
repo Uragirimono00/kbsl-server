@@ -190,15 +190,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthLoginResponse authSteam(String ticket, String appId) throws Exception {
+    public AuthLoginResponse authSteam(String ticket) throws Exception {
         String steamApiUrl = "https://api.steampowered.com";
         String wepApiKey = "5C079DD9A9BFF5F7040586E555524427";
+        String appId = "620980";
         URI uri = UriComponentsBuilder
             .fromUriString(steamApiUrl)
             .pathSegment("ISteamUserAuth", "AuthenticateUserTicket", "v0001")
             .queryParam("key", wepApiKey)
             .queryParam("appid",appId)
             .queryParam("ticket", ticket)
+            .queryParam("identity", ticket)
             .encode()
             .build()
             .toUri();
@@ -206,7 +208,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("Request URI: " + uri);
         RestTemplate restTemplate = new RestTemplate();
         String response = restTemplate.getForObject(uri, String.class);
-
+        log.info("Response: " + response);
         discordUtils.sendMessage(response);
 
         return null;
