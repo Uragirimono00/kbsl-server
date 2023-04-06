@@ -87,14 +87,14 @@ public class BeatLeaderUtils {
      */
     public void saveScoreByUserFromBeatLeaderAPI(User user) {
 
-        if (user.getSteamId() != null){
-            log.error("steamId가 존재하지 않는 유저입니다.");
-            return;
-        }
+//        if (user.getSteamId() != null){
+//            log.error("steamId가 존재하지 않는 유저입니다.");
+//            return;
+//        }
 
         URI compactUri = UriComponentsBuilder
             .fromUriString(beatLeaderUrl)
-            .pathSegment("player", user.getSteamId(), "scores", "compact")
+            .pathSegment("player", user.getUsername(), "scores", "compact")
             .queryParam("page", 1)
             .queryParam("count", count)
             .encode()

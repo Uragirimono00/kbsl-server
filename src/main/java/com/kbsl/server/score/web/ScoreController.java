@@ -105,7 +105,7 @@ public class ScoreController {
     @Tag(name = "Score")
     @Operation(summary = "[App] 점수 제출 API",
         description =
-            "요청자의 steamId를 이용하여 점수를 저장한다.")
+            "요청자의 AccessToken을 이용하여 점수를 저장한다.")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "점수 저장 성공"),
         @ApiResponse(responseCode = "403", description = "권한 없음")
