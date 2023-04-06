@@ -12,12 +12,14 @@ import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.domain.repository.SongRepository;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
+import com.kbsl.server.user.service.principal.PrincipalUserDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +46,7 @@ public class ScoreServiceImpl implements ScoreService {
         /**
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
          */
-        List<User> users = userRepository.findBySteamIdIsNotNull();
+        List<User> users = userRepository.findAll();
         for (User user : users) {
             beatLeaderUtils.saveScoreFromBeatLeaderAPI(user, songEntity);
         }
@@ -69,9 +71,10 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     @Transactional
     public ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto requestDto) throws Exception {
+        PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        User userEntity = userRepository.findBySteamId(requestDto.getSteamId())
-            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. steamId = " + requestDto.getSteamId()));
+        User userEntity = userRepository.findBySeq(userDetails.getUserSeq())
+            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
         Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
 
@@ -119,9 +122,9 @@ public class ScoreServiceImpl implements ScoreService {
         User userEntity = userRepository.findBySeq(userSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
 
-        if (userEntity.getSteamId() == null){
-            throw new RestException(HttpStatus.NOT_FOUND, "유저의 SteamId(BeatLeaderId)를 찾을 수 없습니다. userSeq = " + userSeq);
-        }
+//        if (userEntity.getSteamId() == null){
+//            throw new RestException(HttpStatus.NOT_FOUND, "유저의 SteamId(BeatLeaderId)를 찾을 수 없습니다. userSeq = " + userSeq);
+//        }
 
         beatLeaderUtils.saveScoreByUserFromBeatLeaderAPI(userEntity);
 
