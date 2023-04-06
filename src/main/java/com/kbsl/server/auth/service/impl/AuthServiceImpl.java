@@ -15,10 +15,12 @@ import com.kbsl.server.auth.service.AuthService;
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.boot.util.DiscordUtils;
 import com.kbsl.server.boot.util.JwtUtils;
+import com.kbsl.server.boot.util.SteamUtils;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
 import com.kbsl.server.user.service.principal.PrincipalUserDetail;
 import com.kbsl.server.user.service.principal.PrincipalUserDetailService;
+import com.nimbusds.jose.shaded.json.JSONValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -49,6 +51,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final DiscordUtils discordUtils;
+    private final SteamUtils steamUtils;
     private final UserRepository userRepository;
     private final InMemoryClientRegistrationRepository inMemoryClientRegistrationRepository;
     private final JwtUtils jwtUtils;
@@ -59,23 +62,24 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * AccessToken Refresh
+     *
      * @param requestDto
      * @return
      */
     @Override
     @Transactional
     public AccessTokenRefreshResponseDto accessTokenRefresh(AccessTokenRefreshTokenDto requestDto) {
-        requestDto.setAccessToken( jwtUtils.getAccessTokenFromBearer(
+        requestDto.setAccessToken(jwtUtils.getAccessTokenFromBearer(
             requestDto.getAccessToken()
         ));
 
         String username = jwtUtils.getUserNameFromAccessToken(requestDto.getAccessToken());
 
-        if(!userRepository.existsByUsername(username)) {
+        if (!userRepository.existsByUsername(username)) {
             throw new UsernameNotFoundException(username);
         }
 
-        if(!authTokenRepository.existsByAccessTokenAndSeq(requestDto.getAccessToken(), requestDto.getRefreshToken())) {
+        if (!authTokenRepository.existsByAccessTokenAndSeq(requestDto.getAccessToken(), requestDto.getRefreshToken())) {
             log.error("Refresh Token이 만료되었습니다. 해당 토근 정보를 DB에서 제거합니다.");
             authTokenRepository.deleteBySeq(requestDto.getAccessToken());
             throw new RestException(HttpStatus.valueOf(401), "Refresh Token이 만료되었습니다. 해당 토큰 정보를 DB에서 제거합니다.");
@@ -100,6 +104,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * Oauth2Login main
+     *
      * @param code
      * @return
      */
@@ -108,15 +113,15 @@ public class AuthServiceImpl implements AuthService {
     public AuthLoginResponse authLogin(String code, String requestPath) {
         String provierName = getProvider(requestPath);
 
-        ClientRegistration provider = inMemoryClientRegistrationRepository.findByRegistrationId(provierName);;
+        ClientRegistration provider = inMemoryClientRegistrationRepository.findByRegistrationId(provierName);
 
         log.info(code);
 
         OauthTokenResponse oauthTokenResponse = getToken(code, provider);
 
-        Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);;
+        Authentication authentication = getOAuthUserInfo(provierName, oauthTokenResponse, provider);
 
-        if(authentication == null){
+        if (authentication == null) {
             log.error("허용 되지 않은 로그인입니다.");
             return null;
         }
@@ -138,9 +143,9 @@ public class AuthServiceImpl implements AuthService {
             .refreshToken(refreshToken)
             .build();
 
-        if(!authorities.contains("ROLE_ADMIN")) {
+        if (!authorities.contains("ROLE_ADMIN")) {
             Boolean isLogin = authTokenRepository.existsByUserSeq(userDetail.getUserSeq());
-            if(isLogin) {
+            if (isLogin) {
                 log.info("기존에 로그인된 일반 사용자입니다. DB값을 추출후 재삽입합니다.");
                 authTokenRepository.deleteByUserSeq(userDetail.getUserSeq());
             }
@@ -163,6 +168,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 리퀘스트 패스 받아와 프로바이더 값 설정
+     *
      * @param requestPath
      * @return
      */
@@ -172,6 +178,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 로그아웃 및 토큰 정보 지우기
+     *
      * @param accessToken
      * @return
      */
@@ -191,31 +198,56 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthLoginResponse authSteam(String ticket) throws Exception {
-        String steamApiUrl = "https://api.steampowered.com";
-        String wepApiKey = "5C079DD9A9BFF5F7040586E555524427";
-        String appId = "620980";
-        URI uri = UriComponentsBuilder
-            .fromUriString(steamApiUrl)
-            .pathSegment("ISteamUserAuth", "AuthenticateUserTicket", "v1")
-            .queryParam("key", wepApiKey)
-            .queryParam("appid",appId)
-            .queryParam("ticket", ticket)
-//            .queryParam("identity", identity)
-            .encode()
-            .build()
-            .toUri();
+        Authentication authentication = steamUtils.getAuth(ticket);
 
-        log.info("Request URI: " + uri);
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(uri, String.class);
-        log.info("Response: " + response);
-        discordUtils.sendMessage(response);
+        if (authentication == null) {
+            log.error("허용 되지 않은 로그인입니다.");
+            return null;
+        }
 
-        return null;
+        PrincipalUserDetail userDetail = (PrincipalUserDetail) authentication.getPrincipal();
+        Set<String> authorities = userDetail.getAuthorities()
+            .stream().map(role -> role.getAuthority())
+            .collect(Collectors.toSet());
+
+        String accessToken = jwtUtils.generateAccessToken(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
+
+        String fakeRefreshToken = passwordEncoder.encode(refreshToken);
+
+        AuthToken authTokenEntity = AuthToken.builder()
+            .seq(fakeRefreshToken)
+            .userSeq(userDetail.getUserSeq())
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
+
+        if (!authorities.contains("ROLE_ADMIN")) {
+            Boolean isLogin = authTokenRepository.existsByUserSeq(userDetail.getUserSeq());
+            if (isLogin) {
+                log.info("기존에 로그인된 일반 사용자입니다. DB값을 추출후 재삽입합니다.");
+                authTokenRepository.deleteByUserSeq(userDetail.getUserSeq());
+            }
+        } else {
+            log.info("관리자는 중복 로그인 체크를 하지 않습니다.");
+        }
+
+        authTokenRepository.save(authTokenEntity);
+        AuthLoginResponse authLoginResponse = AuthLoginResponse.builder()
+            .userSeq(userDetail.getUserSeq())
+            .eRole(userDetail.getERole())
+            .accessToken(accessToken)
+            .userName(userDetail.getUsername())
+            .refreshToken(refreshToken)
+            .imageUrl(userDetail.getImageUrl())
+            .build();
+
+        return authLoginResponse;
     }
 
     /**
      * 토큰으로 유저정보 제대로 가져와지나 테스트
+     *
      * @param
      * @return
      */
@@ -228,6 +260,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 가져온 유저 정보 세팅
+     *
      * @param providerName
      * @param oauthTokenResponse
      * @param provider
@@ -237,18 +270,18 @@ public class AuthServiceImpl implements AuthService {
         Map<String, Object> oauthUserAttributes = getOAuthUserAttributes(provider, oauthTokenResponse);
         OAuthUserInfo oAuthUserInfo = null;
         log.info(oauthUserAttributes.toString());
-        if(providerName.equals("discord")) {
+        if (providerName.equals("discord")) {
             oAuthUserInfo = new DiscordUserInfo(oauthUserAttributes);
         } else {
             log.error("허용되지 않는 접근입니다.");
         }
 
-        if (oAuthUserInfo.getEmail().equals("null")){
+        if (oAuthUserInfo.getEmail().equals("null")) {
             log.error("허용 되지 않은 로그인입니다.");
             return null;
         }
 
-        log.info(oAuthUserInfo+"이것은 무엇일까용?");
+        log.info(oAuthUserInfo + "이것은 무엇일까용?");
         log.info("oauth.getUsername {}", oAuthUserInfo.getUserName());
         log.info("oauth.getEmail {}", oAuthUserInfo.getEmail());
 
@@ -261,7 +294,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByUsername(email).orElse(null);
 
-        if(user == null) {
+        if (user == null) {
             userRepository.save(User.builder()
                 .password(passwordEncoder.encode(password))
                 .username(email)
@@ -280,6 +313,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * oauth 토큰으로 인증후 데이터 가져오기
+     *
      * @param provider
      * @param oauthTokenResponse
      * @return
@@ -292,7 +326,7 @@ public class AuthServiceImpl implements AuthService {
             .addHeader("Authorization", "Bearer " + oauthTokenResponse.getAccess_token())
             .build();
 
-        try(Response response = client.newCall(request).execute()) {
+        try (Response response = client.newCall(request).execute()) {
             String responseResult = response.body().string();
 
             response.close();
@@ -308,6 +342,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * oauth 이용 토큰 생성
+     *
      * @param code
      * @param provider
      * @return
@@ -315,8 +350,8 @@ public class AuthServiceImpl implements AuthService {
     private OauthTokenResponse getToken(String code, ClientRegistration provider) {
         OkHttpClient client = new OkHttpClient();
         Map<String, Object> requestMap = tokenRequest(code, provider);
-        String requestParam = "grant_type=authorization_code&client_id="+requestMap.get("client_id")+"&redirect_uri="+
-            requestMap.get("redirect_uri")+"&client_secret="+requestMap.get("client_secret")+"&code="+code;
+        String requestParam = "grant_type=authorization_code&client_id=" + requestMap.get("client_id") + "&redirect_uri=" +
+            requestMap.get("redirect_uri") + "&client_secret=" + requestMap.get("client_secret") + "&code=" + code;
         RequestBody requestBody = RequestBody.create(requestParam, MediaType.parse("application/x-www-form-urlencoded;charset=utf-8"));
 
         Request request = new Request.Builder()
@@ -324,7 +359,7 @@ public class AuthServiceImpl implements AuthService {
             .post(requestBody)
             .build();
 
-        try(Response response = client.newCall(request).execute()) {
+        try (Response response = client.newCall(request).execute()) {
             String responseResult = response.body().string();
             response.close();
             JSONObject responseFromJson = new JSONObject(responseResult);
@@ -339,6 +374,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * oauth 서버에 보낼 Request 정보
+     *
      * @param code
      * @param provider
      * @return

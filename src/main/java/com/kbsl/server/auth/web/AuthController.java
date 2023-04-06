@@ -32,16 +32,16 @@ public class AuthController {
     @GetMapping("discord")
     @Tag(name = "Auth")
     @Operation(
-            summary = "Discord 로그인 API",
-            description = "Discord 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
-                    " OAuth2를 사용해 로그인할 때는 해당 주소로 연결해야한다. <br>" +
-                    " Local : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2Flocalhost%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://localhost:8090/api/v1/auth/discord </a></b> <br>" +
-                    " Dev : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2F52.79.222.211%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://52.79.222.211:8090/auth/discord </a></b> <br>" +
-                    " Prod : "
+        summary = "Discord 로그인 API",
+        description = "Discord 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>" +
+            " OAuth2를 사용해 로그인할 때는 해당 주소로 연결해야한다. <br>" +
+            " Local : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2Flocalhost%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://localhost:8090/api/v1/auth/discord </a></b> <br>" +
+            " Dev : <b><a target='_blank' href='https://discord.com/api/oauth2/authorize?client_id=1072886733156384929&redirect_uri=http%3A%2F%2F52.79.222.211%3A8090%2Fauth%2Fdiscord&response_type=code&scope=identify'> http://52.79.222.211:8090/auth/discord </a></b> <br>" +
+            " Prod : "
     )
-    @ApiResponses( {
-            @ApiResponse(responseCode = "200", description = "로그인 성공"),
-            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그인 성공"),
+        @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AuthLoginResponse> signInDiscord(
@@ -54,15 +54,15 @@ public class AuthController {
     @Tag(name = "Auth")
     @Operation(
         summary = "Steam 로그인 API",
-        description = "Steam 에서 받은 세션Id를 이용해서 로그인을 수행한다. <br>"
+        description = "Steam 에서 받은 세션Id를 이용해서 로그인을 수행한다."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(responseCode = "200", description = "로그인 성공"),
         @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AuthLoginResponse> authSteam(
-            @RequestParam String ticket,
+        @RequestParam String ticket,
         HttpServletRequest request
     ) throws Exception {
         return ResponseEntity.ok(authService.authSteam(ticket));
@@ -71,12 +71,12 @@ public class AuthController {
     @PostMapping("token/refresh")
     @Tag(name = "Auth")
     @Operation(
-            summary = "AccessToken Refresh 토크으로 새로고침 하기",
-            description = "기존에 진행한 로그인에서 받은 AccessToken과 RefreshToken을 이용해서 AccessToken을 새로고침한다."
+        summary = "AccessToken Refresh 토크으로 새로고침 하기",
+        description = "기존에 진행한 로그인에서 받은 AccessToken과 RefreshToken을 이용해서 AccessToken을 새로고침한다."
     )
-    @ApiResponses( {
-            @ApiResponse(responseCode = "201", description = "리프레쉬 성공"),
-            @ApiResponse(responseCode = "401", description = "리프레쉬 실패")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "리프레쉬 성공"),
+        @ApiResponse(responseCode = "401", description = "리프레쉬 실패")
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AccessTokenRefreshResponseDto> accessTokenRefresh(
@@ -87,12 +87,12 @@ public class AuthController {
     @GetMapping("logOut")
     @Tag(name = "Auth")
     @Operation(
-            summary = "로그아웃 API",
-            description = "로그인해서 받은 AccessToken을 이용해 로그아웃을 수행한다."
+        summary = "로그아웃 API",
+        description = "로그인해서 받은 AccessToken을 이용해 로그아웃을 수행한다."
     )
-    @ApiResponses( {
-            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "401", description = "로그아웃 실패")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+        @ApiResponse(responseCode = "401", description = "로그아웃 실패")
     })
     public ResponseEntity<Boolean> logOut(
         @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String accessToken) {
