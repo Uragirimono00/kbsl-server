@@ -58,4 +58,5 @@ public class Score extends BaseEntity {
 
     private LocalDateTime timePost;
 
+    private String regIp;
 }

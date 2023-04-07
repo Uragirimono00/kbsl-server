@@ -9,7 +9,7 @@ public interface ScoreService {
 
     Page<ScoreResponseDto> findSongScore(Long songSeq, Integer page, String sort, Integer elementCnt) throws Exception;
 
-    ScoreResponseDto saveScore(ScoreSaveRequestDto scoreSaveRequestDto) throws Exception;
+    ScoreResponseDto saveScore(ScoreSaveRequestDto scoreSaveRequestDto, String remoteAddr) throws Exception;
 
     ScoreResponseDto updateScoreFromBeatLeader(Long userSeq) throws Exception;
 

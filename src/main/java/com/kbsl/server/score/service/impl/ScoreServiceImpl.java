@@ -10,7 +10,6 @@ import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.domain.repository.SongRepository;
-import com.kbsl.server.song.dto.response.SongApiResponseDto;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
 import com.kbsl.server.user.service.principal.PrincipalUserDetail;
@@ -72,7 +71,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Transactional
-    public ScoreResponseDto saveScore(ScoreSaveRequestDto requestDto) throws Exception {
+    public ScoreResponseDto saveScore(ScoreSaveRequestDto requestDto, String remoteAddr) throws Exception {
         PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User userEntity = userRepository.findBySeq(userDetails.getUserSeq())
@@ -111,6 +110,7 @@ public class ScoreServiceImpl implements ScoreService {
                 .accRight(requestDto.getAccRight())
                 .comment("")
                 .timePost(LocalDateTime.now())
+                .regIp(remoteAddr)
                 .build();
 
         scoreRepository.save(score);

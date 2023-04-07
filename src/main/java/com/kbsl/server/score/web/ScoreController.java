@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @Tag(name = "Score", description = "점수 API")
 @RestController
@@ -112,8 +114,9 @@ public class ScoreController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ScoreResponseDto> saveScore(
-        @RequestBody ScoreSaveRequestDto scoreSaveRequestDto
-    ) throws Exception {
-        return ResponseEntity.ok(scoreService.saveScore(scoreSaveRequestDto));
+        @RequestBody ScoreSaveRequestDto scoreSaveRequestDto,
+        HttpServletRequest httpServletRequest
+        ) throws Exception {
+        return ResponseEntity.ok(scoreService.saveScore(scoreSaveRequestDto, httpServletRequest.getRemoteAddr()));
     }
 }
