@@ -10,6 +10,7 @@ import com.kbsl.server.score.dto.response.ScoreResponseDto;
 import com.kbsl.server.score.service.ScoreService;
 import com.kbsl.server.song.domain.model.Song;
 import com.kbsl.server.song.domain.repository.SongRepository;
+import com.kbsl.server.song.dto.response.SongApiResponseDto;
 import com.kbsl.server.user.domain.model.User;
 import com.kbsl.server.user.domain.repository.UserRepository;
 import com.kbsl.server.user.service.principal.PrincipalUserDetail;
@@ -42,7 +43,7 @@ public class ScoreServiceImpl implements ScoreService {
     public Boolean updateSongScoreFromBeatLeader(Long songSeq) throws Exception {
 
         Song songEntity = songRepository.findBySeq(songSeq)
-            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
 
         /**
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
@@ -60,13 +61,13 @@ public class ScoreServiceImpl implements ScoreService {
     @Transactional
     public Page<ScoreResponseDto> findSongScore(Long songSeq, Integer page, String sort, Integer elementCnt) throws Exception {
         Song songEntity = songRepository.findBySeq(songSeq)
-            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 곡을 찾을 수 없습니다."));
 
         // 페이징 객체를 생성한다.
-        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
         return scoreRepository.findAllScoreBySongSeqWithPage(songSeq, pageable, sort)
-            .map(score -> ScoreResponseDto.builder().entity(score).build());
+                .map(score -> ScoreResponseDto.builder().entity(score).build());
     }
 
     @Override
@@ -75,14 +76,17 @@ public class ScoreServiceImpl implements ScoreService {
         PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User userEntity = userRepository.findBySeq(userDetails.getUserSeq())
-            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
-        Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
+        String songHash = requestDto.getSongHash().toLowerCase();
+
+        Song songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), songHash, requestDto.getSongDifficulty());
 
         if (songEntity == null) {
-            beatSaverUtils.saveSongByHashFromBeatSaverAPI(requestDto.getSongHash());
+            beatSaverUtils.saveSongByHashFromBeatSaverAPI(songHash);
             // 노래 재 조회
-            songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), requestDto.getSongHash(), requestDto.getSongDifficulty());
+            songEntity = songRepository.findBySongModeTypeAndSongHashAndSongDifficulty(requestDto.getSongModeType(), songHash, requestDto.getSongDifficulty());
+
             if (songEntity == null) {
                 // todo: 스코어 기록이 실패할 경우 log에 해당기록을 남겨 스코어를 잃어버리지 않도록 예외를 처리한다.
                 throw new RestException(HttpStatus.NOT_FOUND, "노래를 찾을 수 없습니다... 재시도 해주십시오...");
@@ -91,23 +95,23 @@ public class ScoreServiceImpl implements ScoreService {
 
         // 점수를 저장한다.
         Score score = Score.builder()
-            .user(userEntity)
-            .song(songEntity)
-            .scoreSeq(0L)
-            .baseScore(requestDto.getBaseScore())
-            .modifiedScore(requestDto.getModifiedScore())
-            .accuracy(requestDto.getAccuracy())
-            .badCut(requestDto.getBadCut())
-            .missedNote(requestDto.getMissedNote())
-            .bombCut(requestDto.getBombCut())
-            .wallsHit(requestDto.getWallsHit())
-            .pause(requestDto.getPause())
-            .playCount(requestDto.getPlayCount())
-            .accLeft(requestDto.getAccLeft())
-            .accRight(requestDto.getAccRight())
-            .comment("")
-            .timePost(LocalDateTime.now())
-            .build();
+                .user(userEntity)
+                .song(songEntity)
+                .scoreSeq(0L)
+                .baseScore(requestDto.getBaseScore())
+                .modifiedScore(requestDto.getModifiedScore())
+                .accuracy(requestDto.getAccuracy())
+                .badCut(requestDto.getBadCut())
+                .missedNote(requestDto.getMissedNote())
+                .bombCut(requestDto.getBombCut())
+                .wallsHit(requestDto.getWallsHit())
+                .pause(requestDto.getPause())
+                .playCount(requestDto.getPlayCount())
+                .accLeft(requestDto.getAccLeft())
+                .accRight(requestDto.getAccRight())
+                .comment("")
+                .timePost(LocalDateTime.now())
+                .build();
 
         scoreRepository.save(score);
 
@@ -121,7 +125,7 @@ public class ScoreServiceImpl implements ScoreService {
          * 유저 정보를 가져온 후, DTO 에 삽입한다.
          */
         User userEntity = userRepository.findBySeq(userSeq)
-            .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
 
         beatLeaderUtils.saveScoreByUserFromBeatLeaderAPI(userEntity);
 
@@ -134,7 +138,7 @@ public class ScoreServiceImpl implements ScoreService {
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
 
         // 페이징 객체를 생성한다.
-        Pageable pageable = PageRequest.of(page-1, elementCnt == null ? 10 : elementCnt);
+        Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
         return scoreRepository.findAllScoreByUserWithPage(userEntity, pageable, sort)
                 .map(score -> ScoreResponseDto.builder().entity(score).build());

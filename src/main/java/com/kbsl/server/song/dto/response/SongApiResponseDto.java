@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 public class SongApiResponseDto {
+    @Schema(description = "노래 seq")
+    private Long seq;
     @Schema(description = "노래 ID")
     private String songId;
 
@@ -49,6 +51,7 @@ public class SongApiResponseDto {
 
     @Builder
     public SongApiResponseDto(Song entity) {
+        this.seq = entity.getSeq();
         this.songId = entity.getSongId();
         this.songName = entity.getSongName();
         this.songHash = entity.getSongHash();

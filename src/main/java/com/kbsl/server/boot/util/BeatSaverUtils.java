@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,6 +30,7 @@ public class BeatSaverUtils {
     private String beatSaverUrl = "https://api.beatsaver.com";
     private final SongRepository songRepository;
 
+    @Transactional
     public List<SongApiResponseDto> saveSongByHashFromBeatSaverAPI(String songHash){
         List<SongApiResponseDto> songApiResponseDtoArrayList = new ArrayList<>();
 
