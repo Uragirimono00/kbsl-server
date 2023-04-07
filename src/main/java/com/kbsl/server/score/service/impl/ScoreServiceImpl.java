@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -70,7 +71,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Transactional
-    public ScoreResponseDto saveScoreWithSteamId(ScoreSaveRequestDto requestDto) throws Exception {
+    public ScoreResponseDto saveScore(ScoreSaveRequestDto requestDto) throws Exception {
         PrincipalUserDetail userDetails = (PrincipalUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User userEntity = userRepository.findBySeq(userDetails.getUserSeq())
@@ -105,7 +106,7 @@ public class ScoreServiceImpl implements ScoreService {
             .accLeft(requestDto.getAccLeft())
             .accRight(requestDto.getAccRight())
             .comment("")
-            .timePost(requestDto.getTimePost())
+            .timePost(LocalDateTime.now())
             .build();
 
         scoreRepository.save(score);
@@ -121,10 +122,6 @@ public class ScoreServiceImpl implements ScoreService {
          */
         User userEntity = userRepository.findBySeq(userSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다. userSeq = " + userSeq));
-
-//        if (userEntity.getSteamId() == null){
-//            throw new RestException(HttpStatus.NOT_FOUND, "유저의 SteamId(BeatLeaderId)를 찾을 수 없습니다. userSeq = " + userSeq);
-//        }
 
         beatLeaderUtils.saveScoreByUserFromBeatLeaderAPI(userEntity);
 

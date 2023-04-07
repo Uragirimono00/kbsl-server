@@ -111,9 +111,9 @@ public class ScoreController {
         @ApiResponse(responseCode = "403", description = "권한 없음")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ScoreResponseDto> saveScoreWithSteamId(
+    public ResponseEntity<ScoreResponseDto> saveScore(
         @RequestBody ScoreSaveRequestDto scoreSaveRequestDto
     ) throws Exception {
-        return ResponseEntity.ok(scoreService.saveScoreWithSteamId(scoreSaveRequestDto));
+        return ResponseEntity.ok(scoreService.saveScore(scoreSaveRequestDto));
     }
 }

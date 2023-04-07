@@ -21,13 +21,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ScoreSaveRequestDto {
 
-    @Schema(description = "비트리더 스코어 시퀀스")
-    private String steamId;
-
-    @JsonIgnore
-    @Schema(description = "비트리더 스코어 시퀀스")
-    private Long scoreSeq;
-
     @Schema(description = "기본 점수")
     private Long baseScore;
 
@@ -61,14 +54,9 @@ public class ScoreSaveRequestDto {
     @Schema(description = "오른손 평균 점수")
     private Double accRight;
 
-    @Schema(description = "기록된 시간 유닉스 타임")
-    private LocalDateTime timePost;
-
-    @Schema(description = "노래 ID")
-    private String songId;
-
     @Schema(description = "노래 해쉬")
     private String songHash;
+
     @Schema(description = "노래 난이도", example = "ExpertPlus")
     private SongDifficultyType songDifficulty;
 
@@ -79,7 +67,6 @@ public class ScoreSaveRequestDto {
         return Score.builder()
                 .user(userEntity)
                 .song(songEntity)
-                .scoreSeq(scoreSeq)
                 .baseScore(baseScore)
                 .modifiedScore(modifiedScore)
                 .accuracy(accuracy)
@@ -91,7 +78,6 @@ public class ScoreSaveRequestDto {
                 .playCount(playCount)
                 .accLeft(accLeft)
                 .accRight(accRight)
-                .timePost(timePost)
                 .build();
     }
 }
