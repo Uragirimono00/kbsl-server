@@ -51,7 +51,7 @@ public class RankServiceImpl implements RankService {
         /**
          * 유저 및 리그에 대한 정보 및 추가 정보를 수정한다.
          */
-        User userEntity = userRepository.findBySteamId(steamId)
+        User userEntity = userRepository.findByUsername(steamId)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 유저를 찾을 수 없습니다."));
 
         Song songEntity = songRepository.findBySeq(songSeq)
