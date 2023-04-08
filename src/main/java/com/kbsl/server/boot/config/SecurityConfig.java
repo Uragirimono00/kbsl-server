@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/**/auth/**").permitAll()
+                .antMatchers("/**/test/**").permitAll()
                 .antMatchers("/**/adm/**").hasAnyRole("ADMIN")
                 .antMatchers("/**/rank/**").permitAll()
                 .antMatchers("/**/league/**").permitAll()

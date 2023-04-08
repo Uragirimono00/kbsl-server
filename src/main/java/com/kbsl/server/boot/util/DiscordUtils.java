@@ -1,5 +1,6 @@
 package com.kbsl.server.boot.util;
 
+import com.kbsl.server.boot.discord.DiscordEmbed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +20,25 @@ public class DiscordUtils {
     @Value("${webhook.discord.league}")
     private String leagueChannelUrl;
 
+    @Value("${webhook.discord.score}")
+    private String scoreChannelUrl;
+
+    public void sendEmbedMessage(DiscordEmbed discordEmbed) {
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<DiscordEmbed> request = new HttpEntity<>(discordEmbed, headers);
+            restTemplate.postForObject(scoreChannelUrl, request, String.class);
+        }catch (Exception e){
+            log.info(e.toString());
+        }
+    }
+
     public void LeagueCreateMessage(String content){
         try{
-            String discordWebhookUrl = leagueChannelUrl;
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
@@ -31,7 +48,7 @@ public class DiscordUtils {
             message.put("content", content);
 
             HttpEntity<Map<String, String>> request = new HttpEntity<>(message, headers);
-            restTemplate.postForObject(discordWebhookUrl, request, String.class);
+            restTemplate.postForObject(leagueChannelUrl, request, String.class);
         }catch (Exception e){
             log.info(e.toString());
         }
@@ -39,7 +56,6 @@ public class DiscordUtils {
 
     public void sendMessage(String content){
         try{
-            String discordWebhookUrl = leagueChannelUrl;
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
@@ -49,9 +65,10 @@ public class DiscordUtils {
             message.put("content", content);
 
             HttpEntity<Map<String, String>> request = new HttpEntity<>(message, headers);
-            restTemplate.postForObject(discordWebhookUrl, request, String.class);
+            restTemplate.postForObject(leagueChannelUrl, request, String.class);
         }catch (Exception e){
             log.info(e.toString());
         }
     }
+
 }

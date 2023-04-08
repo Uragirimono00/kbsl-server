@@ -56,3 +56,4 @@ spring:
 webhook:
   discord:
     league: https://discord.com/api/webhooks/1089137750839656539/AMIOhygS4pfCYLT1J4jez-XThgkYzG_R8SRDhFHnh0w4Fs_JJI3loFfZKockaR9vITqk
+    score: https://discord.com/api/webhooks/1094181987390062622/4mvFIUJLwUijnIg0wnEkbRw7ycBmDc-8ZF7_QrRjgetwoxq9rQw3FT0TVdixQud4y1-C
