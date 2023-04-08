@@ -1,5 +1,8 @@
 package com.kbsl.server.score.service.impl;
 
+import com.kbsl.server.boot.discord.Author;
+import com.kbsl.server.boot.discord.DiscordEmbed;
+import com.kbsl.server.boot.discord.DiscordMessage;
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.boot.util.BeatLeaderUtils;
 import com.kbsl.server.boot.util.BeatSaverUtils;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -114,6 +118,27 @@ public class ScoreServiceImpl implements ScoreService {
                 .build();
 
         scoreRepository.save(score);
+
+        Author author = Author.builder()
+                .name(userEntity.getNickName())
+                .iconUrl(userEntity.getImageUrl())
+                .build();
+
+        List<DiscordEmbed> discordEmbed = new ArrayList<>();
+        discordEmbed.add(
+                DiscordEmbed.builder()
+                        .author(author)
+                        .title("신규 스코어가 등록되었습니다!")
+                        .description(songEntity.getSongName() + " - " + songEntity.getSongModeType() + " - " + songEntity.getSongModeType() +"\n" +
+                                score.getAccuracy() + "% " +score.getModifiedScore() + "점 " + score.getBadCut() + score.getBombCut() + score.getWallsHit() + score.getMissedNote() + ":x:")
+                        .timestamp(LocalDateTime.now())
+                        .color(0xFF0000)
+                        .build()
+        );
+
+        DiscordMessage discordMessage = DiscordMessage.builder()
+                .embeds(discordEmbed)
+                .build();
 
         return ScoreResponseDto.builder().entity(score).build();
     }

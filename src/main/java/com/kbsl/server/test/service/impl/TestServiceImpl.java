@@ -2,6 +2,7 @@ package com.kbsl.server.test.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kbsl.server.boot.discord.Author;
 import com.kbsl.server.boot.discord.DiscordEmbed;
 import com.kbsl.server.boot.discord.DiscordMessage;
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +36,6 @@ public class TestServiceImpl implements TestService {
         Author author = Author.builder()
                 .name("김캬루")
                 .iconUrl("https://media.discordapp.net/attachments/1030367806644035626/1094182606700027924/2.png?width=896&height=896")
-                .url("https://naver.com")
                 .build();
 
         List<DiscordEmbed> discordEmbed = new ArrayList<>();
@@ -40,7 +43,7 @@ public class TestServiceImpl implements TestService {
                 DiscordEmbed.builder()
                         .author(author)
                         .title("테스트입니다.")
-                        .description("설명입니다.")
+                        .description("설명입니다. \n 엔터는 이스케이프 문자로 합니다. :x:")
                         .color(0xFF0000)
                         .build()
         );
@@ -50,27 +53,8 @@ public class TestServiceImpl implements TestService {
                 .embeds(discordEmbed)
                 .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        discordUtils.sendEmbedMessage(discordMessage);
 
-        try {
-            String json = objectMapper.writeValueAsString(discordMessage);
-            System.out.println(json);
-
-            RestTemplate restTemplate = new RestTemplate();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            String url = "https://discord.com/api/webhooks/1094181987390062622/4mvFIUJLwUijnIg0wnEkbRw7ycBmDc-8ZF7_QrRjgetwoxq9rQw3FT0TVdixQud4y1-C";
-            HttpEntity<?> request = new HttpEntity<>(json, headers);
-            restTemplate.postForObject(url, request, String.class);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-//        discordUtils.sendEmbedMessage(discordEmbed);
-
-        return null;
+        return discordMessage;
     }
 }

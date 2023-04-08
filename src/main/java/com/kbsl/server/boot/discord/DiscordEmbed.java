@@ -1,5 +1,6 @@
 package com.kbsl.server.boot.discord;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -18,6 +19,9 @@ public class DiscordEmbed {
 
     @JsonProperty("color")
     private int color;
+
+    @JsonProperty("timestamp")
+    private LocalDateTime timestamp;
 
     @JsonProperty("author")
     private Author author;
