@@ -31,6 +31,10 @@ public class DiscordUtils {
     @Value("${webhook.discord.score}")
     private String scoreChannelUrl;
 
+    /**
+     * todo: Discord Embed 전송 인데... Score 채널 전용임 지금은
+     * @param discordMessage
+     */
     public void sendEmbedMessage(DiscordMessage discordMessage) {
         discordMessage.getEmbeds().get(0).setTimestamp(ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime());
 

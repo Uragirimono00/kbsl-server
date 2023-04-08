@@ -6,6 +6,7 @@ import com.kbsl.server.boot.discord.DiscordMessage;
 import com.kbsl.server.boot.exception.RestException;
 import com.kbsl.server.boot.util.BeatLeaderUtils;
 import com.kbsl.server.boot.util.BeatSaverUtils;
+import com.kbsl.server.boot.util.DiscordUtils;
 import com.kbsl.server.score.domain.model.Score;
 import com.kbsl.server.score.domain.repository.ScoreRepository;
 import com.kbsl.server.score.dto.request.ScoreSaveRequestDto;
@@ -35,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScoreServiceImpl implements ScoreService {
 
+    private final DiscordUtils discordUtils;
     private final UserRepository userRepository;
     private final SongRepository songRepository;
     private final ScoreRepository scoreRepository;
@@ -119,6 +121,7 @@ public class ScoreServiceImpl implements ScoreService {
 
         scoreRepository.save(score);
 
+        // Discord Embed 전송용 데이터 초기화
         Author author = Author.builder()
                 .name(userEntity.getNickName())
                 .iconUrl(userEntity.getImageUrl())
@@ -131,7 +134,6 @@ public class ScoreServiceImpl implements ScoreService {
                         .title("신규 스코어가 등록되었습니다!")
                         .description(songEntity.getSongName() + " - " + songEntity.getSongModeType() + " - " + songEntity.getSongModeType() +"\n" +
                                 score.getAccuracy() + "% " +score.getModifiedScore() + "점 " + score.getBadCut() + score.getBombCut() + score.getWallsHit() + score.getMissedNote() + ":x:")
-                        .timestamp(LocalDateTime.now())
                         .color(0xFF0000)
                         .build()
         );
@@ -139,6 +141,8 @@ public class ScoreServiceImpl implements ScoreService {
         DiscordMessage discordMessage = DiscordMessage.builder()
                 .embeds(discordEmbed)
                 .build();
+
+        discordUtils.sendEmbedMessage(discordMessage);
 
         return ScoreResponseDto.builder().entity(score).build();
     }
