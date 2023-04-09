@@ -50,4 +50,6 @@ public class Song extends BaseEntity {
 
     private LocalDateTime publishedDtime;
 
+    @OneToMany(mappedBy = "song")
+    private List<SongBadgeList> songBadgeList;
 }
