@@ -5,9 +5,14 @@ import com.kbsl.server.boot.util.BeatSaverUtils;
 import com.kbsl.server.league.domain.model.League;
 import com.kbsl.server.league.domain.repository.LeagueRepository;
 import com.kbsl.server.song.domain.model.Song;
+import com.kbsl.server.song.domain.model.SongBadge;
+import com.kbsl.server.song.domain.model.SongBadgeList;
+import com.kbsl.server.song.domain.repository.SongBadgeListRepository;
+import com.kbsl.server.song.domain.repository.SongBadgeRepository;
 import com.kbsl.server.song.domain.repository.SongRepository;
 import com.kbsl.server.song.dto.request.SongSaveRequestDto;
 import com.kbsl.server.song.dto.response.SongApiResponseDto;
+import com.kbsl.server.song.dto.response.SongBadgeResponseDto;
 import com.kbsl.server.song.dto.response.SongResponseDto;
 import com.kbsl.server.song.enums.SongDifficultyType;
 import com.kbsl.server.song.enums.SongModeType;
@@ -37,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -46,6 +52,8 @@ public class SongServiceImpl implements SongService {
     private final UserRepository userRepository;
     private final LeagueRepository leagueRepository;
     private final SongRepository songRepository;
+    private final SongBadgeRepository songBadgeRepository;
+    private final SongBadgeListRepository songBadgeListRepository;
     private final BeatSaverUtils beatSaverUtils;
 
     @Override
@@ -97,7 +105,16 @@ public class SongServiceImpl implements SongService {
         Song songEntity = songRepository.findBySeq(songSeq)
             .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 노래를 찾을 수 없습니다. songSeq=" + songSeq));
 
+        List<SongBadgeList> songBadgeLists = songBadgeListRepository.findAllBySongSeq(songEntity.getSeq());
+
+        if (!songBadgeLists.isEmpty()){
+            List<SongBadgeResponseDto> songBadgeList = songBadgeLists.stream()
+                    .map(songBadge -> SongBadgeResponseDto.builder().entity(songBadge.getSongBadge()).build())
+                    .collect(Collectors.toList());
+            return SongResponseDto.builder().entity(songEntity).songBadgeList(songBadgeList).build();
+        }
         return SongResponseDto.builder().entity(songEntity).build();
+
     }
 
     @Override

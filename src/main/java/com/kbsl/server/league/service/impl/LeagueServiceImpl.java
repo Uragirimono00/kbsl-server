@@ -119,14 +119,6 @@ public class LeagueServiceImpl implements LeagueService {
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "일치하는 리그를 찾을 수 없습니다."));
 
         LeagueDeatilResponseDto responseDto = LeagueDeatilResponseDto.builder().entity(leagueEntity).build();
-        List<Song> songList = leagueEntity.getSongsList();
-
-        if (!songList.isEmpty()) {
-            List<SongResponseDto> songResponseDtoList = songList.stream()
-                    .map(song -> SongResponseDto.builder().entity(song).build())
-                    .collect(Collectors.toList());
-            responseDto.setSongsList(songResponseDtoList);
-        }
 
         return responseDto;
     }

@@ -1,6 +1,8 @@
 package com.kbsl.server.song.dto.response;
 
 import com.kbsl.server.song.domain.model.Song;
+import com.kbsl.server.song.domain.model.SongBadge;
+import com.kbsl.server.song.domain.model.SongBadgeList;
 import com.kbsl.server.song.enums.SongDifficultyType;
 import com.kbsl.server.song.enums.SongModeType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,6 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -42,8 +47,11 @@ public class SongResponseDto {
     @Schema(description = "다운로드 경로")
     private String downloadUrl;
 
+    @Schema(description = "배지")
+    private List<SongBadgeResponseDto> songBadgeResponse;
+
     @Builder
-    public SongResponseDto(Song entity) {
+    public SongResponseDto(Song entity, List<SongBadgeResponseDto> songBadgeList) {
         this.seq = entity.getSeq();
         this.songId = entity.getSongId();
         this.songHash = entity.getSongHash();
@@ -54,6 +62,8 @@ public class SongResponseDto {
         this.coverUrl = entity.getCoverUrl();
         this.previewUrl = entity.getPreviewUrl();
         this.downloadUrl = entity.getDownloadUrl();
+        if (songBadgeList != null)
+            this.songBadgeResponse = songBadgeList;
     }
 
 }
